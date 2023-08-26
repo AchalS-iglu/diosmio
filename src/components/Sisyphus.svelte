@@ -4,15 +4,15 @@
 	.loader {
 		position: relative;
 		font-size: 16px;
-		width: 11em;
-		height: 11em;
+		width: 5.5em;
+		height: 5.5em;
 	}
 
 	.loader:before {
 		position: absolute;
 		transform: translate(-50%, -50%) rotate(45deg);
 		height: 100%;
-		width: 8px;
+		width: 4px;
 		content: var(--tw-content);
 		--tw-bg-opacity: 1;
 		background-color: hsl(var(--b3) / var(--tw-bg-opacity));

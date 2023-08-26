@@ -200,3 +200,15 @@
 		font-display: swap;
 	}
 }
+
+.containerBetween {
+	@apply flex flex-col items-center w-screen h-screen justify-between font-montserrat;
+}
+
+.containerCenter {
+	@apply flex flex-col items-center w-screen h-screen justify-center font-montserrat;
+}
+
+.blankInput {
+	@apply bg-transparent border-none outline-none;
+}
