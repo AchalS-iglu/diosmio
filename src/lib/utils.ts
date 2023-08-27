@@ -50,3 +50,8 @@ export const getDateRange = (cycle: { start: Date; end: Date }): string => {
 		);
 	}
 };
+
+export const getThemesfromLS = () => {
+	const theme = localStorage.getItem('theme');
+	return theme ? theme : 'retro';
+};
