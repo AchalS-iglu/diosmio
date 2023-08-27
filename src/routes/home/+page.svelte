@@ -11,7 +11,15 @@
 		end: new Date('2021-09-23')
 	};
 
-	onMount(() => {});
+	let menuOpen: boolean = false;
+
+	onMount(() => {
+		const details = document.querySelector('details');
+		if (!details) return;
+		details.addEventListener('toggle', () => {
+			menuOpen = details.open;
+		});
+	});
 </script>
 
 <dialog id="addExpense" class="modal">
@@ -80,14 +88,24 @@
 			</button>
 		</div>
 		<details class="dropdown dropdown-end dropdown-hover">
-			<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
-				<Icon
-					icon="line-md:close-to-menu-transition"
-					class="w-8 h-8"
-					color="hsl(var(--suc) / var(--tw-text-opacity))"
-				/>
-			</summary>
-			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-52">
+			{#if !menuOpen}
+				<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
+					<Icon
+						icon="line-md:close-to-menu-transition"
+						class="w-8 h-8"
+						color="hsl(var(--suc) / var(--tw-text-opacity))"
+					/>
+				</summary>
+			{:else}
+				<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
+					<Icon
+						icon="line-md:menu-to-close-transition"
+						class="w-8 h-8"
+						color="hsl(var(--suc) / var(--tw-text-opacity))"
+					/>
+				</summary>
+			{/if}
+			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-32">
 				<li>
 					<button
 						class="btn btn-sm mb-2"
