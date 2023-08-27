@@ -12,6 +12,8 @@
 	};
 
 	let menuOpen: boolean = false;
+	let addingFunds: boolean = false;
+	let subtractingFunds: boolean = false;
 
 	onMount(() => {
 		const details = document.querySelector('details');
@@ -78,7 +80,9 @@
 		<div class="lg:tooltip lg:tooltip-bottom" data-tip="Add Expense">
 			<button
 				class="btn btn-success p-2 join-item rounded-none"
-				on:click={() => window.addExpense.showModal()}
+				on:click={() =>
+					// @ts-ignore
+					window.addExpense.showModal()}
 			>
 				<Icon
 					icon="line-md:document-add"
@@ -136,7 +140,51 @@
 			<div class="stat-title">Balance</div>
 			<div class="stat-value text-3xl">$89,400</div>
 			<div class="stat-actions">
-				<button class="btn btn-sm btn-success">Add funds</button>
+				{#if !addingFunds && !subtractingFunds}
+					<div class="flex flex-row join">
+						<button class="btn btn-sm btn-success join-item" on:click={() => (addingFunds = true)}>
+							<Icon icon="line-md:plus" class="w-4 h-4" />
+						</button>
+						<button
+							class="btn btn-sm btn-error join-item"
+							on:click={() => (subtractingFunds = true)}
+						>
+							<Icon icon="line-md:minus" class="w-4 h-4" />
+						</button>
+						<span class="btn btn-sm btn-info join-item"> FUNDS </span>
+					</div>
+				{:else if addingFunds}
+					<div class="flex flex-row join">
+						<input
+							type="number"
+							class="input input-sm w-12 grow join-item [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+							placeholder="$$$$$$$$$"
+						/>
+						<button class="btn btn-sm btn-success join-item">
+							<Icon icon="line-md:confirm" class="w-4 h-4" />
+						</button>
+						<button class="btn btn-sm btn-error join-item" on:click={() => (addingFunds = false)}>
+							<Icon icon="line-md:remove" class="w-4 h-4" />
+						</button>
+					</div>
+				{:else if subtractingFunds}
+					<div class="flex flex-row join">
+						<input
+							type="number"
+							class="input input-sm w-12 grow join-item [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+							placeholder="$$$$$$$$$"
+						/>
+						<button class="btn btn-sm btn-warning join-item">
+							<Icon icon="line-md:confirm" class="w-4 h-4" />
+						</button>
+						<button
+							class="btn btn-sm btn-error join-item"
+							on:click={() => (subtractingFunds = false)}
+						>
+							<Icon icon="line-md:remove" class="w-4 h-4" />
+						</button>
+					</div>
+				{/if}
 			</div>
 		</div>
 
