@@ -67,23 +67,49 @@
 				<Icon icon="line-md:calendar" class="w-8 h-8 text-primary-content" />
 			</div>
 		</div>
-		<button
-			class="btn btn-success p-2 join-item rounded-none"
-			on:click={() => window.addExpense.showModal()}
-		>
-			<Icon
-				icon="line-md:document-add"
-				class="w-8 h-8"
-				color="hsl(var(--suc) / var(--tw-text-opacity))"
-			/>
-		</button>
-		<button class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
-			<Icon
-				icon="line-md:close-to-menu-transition"
-				class="w-8 h-8"
-				color="hsl(var(--suc) / var(--tw-text-opacity))"
-			/>
-		</button>
+		<div class="lg:tooltip lg:tooltip-bottom" data-tip="Add Expense">
+			<button
+				class="btn btn-success p-2 join-item rounded-none"
+				on:click={() => window.addExpense.showModal()}
+			>
+				<Icon
+					icon="line-md:document-add"
+					class="w-8 h-8"
+					color="hsl(var(--suc) / var(--tw-text-opacity))"
+				/>
+			</button>
+		</div>
+		<details class="dropdown dropdown-end dropdown-hover">
+			<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
+				<Icon
+					icon="line-md:close-to-menu-transition"
+					class="w-8 h-8"
+					color="hsl(var(--suc) / var(--tw-text-opacity))"
+				/>
+			</summary>
+			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-52">
+				<li>
+					<button
+						class="btn btn-sm mb-2"
+						on:click={() => {
+							console.log('Settings');
+						}}
+					>
+						Settings
+					</button>
+				</li>
+				<li>
+					<button
+						class="btn btn-sm"
+						on:click={() => {
+							console.log('Logout');
+						}}
+					>
+						Logout
+					</button>
+				</li>
+			</ul>
+		</details>
 	</div>
 	<div
 		class="stats flex-none rounded-se-none rounded-ss-none bg-primary text-primary-content shadow mx-3 rounded-es-md rounded-ee-md"
