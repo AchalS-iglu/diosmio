@@ -13,7 +13,7 @@
 </script>
 
 <div class="containerCenter gap-4">
-	<h1 class="text-4xl font-bold text-center text-base-content font-montserratAlt">Register</h1>
+	<h1 class="text-4xl font-bold text-center text-base-content font-montserratAlt">Login</h1>
 	<form class="flex flex-col gap-2">
 		<!-- pass and user input  -->
 		<div class="form-control">
@@ -28,18 +28,7 @@
 			</label>
 			<input type="password" id="pass-input" placeholder="Password" class="input input-bordered" />
 		</div>
-		<div class="form-control">
-			<label class="label" for="confirm-pass-input">
-				<span class="label-text">Confirm Password</span>
-			</label>
-			<input
-				type="password"
-				id="confirm-pass-input"
-				placeholder="Confirm Password"
-				class="input input-bordered"
-			/>
-		</div>
-		<button class="btn btn-primary justify-self-center mt-2" type="submit"> Register </button>
+		<button class="btn btn-primary justify-self-center mt-2" type="submit"> Login </button>
 	</form>
 	<div>
 		<div class="divider flex w-64">OR</div>
@@ -57,6 +46,7 @@
 		<a class="btn btn-neutral justify-self-center" href="/auth/github">
 			<Icon icon="akar-icons:github-fill" width="20" height="20" />Continue with Github
 		</a>
-		<a class="text-center text-xs link text-base-content" href="/login">Already have an account?</a>
+		<a class="text-center text-xs link text-base-content" href="/register">Don't have an account?</a
+		>
 	</div>
 </div>

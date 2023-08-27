@@ -3,9 +3,7 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		setTimeout(() => {
-			goto('/home');
-		}, 1000);
+		goto('/welcome');
 	});
 </script>
 
