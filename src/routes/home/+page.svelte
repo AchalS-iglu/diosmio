@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import Pie from '../../components/ExpensesTagsPie.svelte';
 	import { data } from './randomData';
+	import MultiSelect from 'svelte-multiselect';
 
 	let range = {
 		start: new Date('2021-08-24'),
@@ -12,6 +13,45 @@
 
 	onMount(() => {});
 </script>
+
+<dialog id="addExpense" class="modal">
+	<form method="dialog" class="modal-box">
+		<div class="flex flex-col mb-3">
+			<label class="label" for="expense-title">
+				<span class="label-text">Title</span>
+			</label>
+			<input type="text" id="expense-title" placeholder="Title" class="input input-bordered" />
+		</div>
+		<div class="flex flex-col mb-3">
+			<label class="label" for="expense-tags">
+				<span class="label-text">Tags</span>
+			</label>
+			<MultiSelect
+				options={['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Education']}
+				allowUserOptions={true}
+				id="expense-tags"
+				placeholder="Select or create tags"
+				outerDivClass="input input-bordered"
+			/>
+		</div>
+		<div class="flex flex-col mb-3">
+			<label class="label" for="expense-amount">
+				<span class="label-text">Amount</span>
+			</label>
+			<input type="number" id="expense-amount" placeholder="Amount" class="input input-bordered" />
+		</div>
+		<div class="flex flex-col mb-3">
+			<label class="label" for="expense-date">
+				<span class="label-text">Date</span>
+			</label>
+			<input type="date" id="expense-date" placeholder="Date" class="input input-bordered" />
+		</div>
+		<div class="flex flex-row w-full justify-evenly">
+			<button class="btn btn-primary">Add</button>
+			<button class="btn">Cancel</button>
+		</div>
+	</form>
+</dialog>
 
 <div class="overflow-y-scroll w-screen h-screen flex flex-col">
 	<hr
@@ -27,16 +67,17 @@
 				<Icon icon="line-md:calendar" class="w-8 h-8 text-primary-content" />
 			</div>
 		</div>
-		<button class="p-2 bg-success join-item active:bg-primary-focus hover:bg-primary-focus">
+		<button
+			class="btn btn-success p-2 join-item rounded-none"
+			on:click={() => window.addExpense.showModal()}
+		>
 			<Icon
 				icon="line-md:document-add"
 				class="w-8 h-8"
 				color="hsl(var(--suc) / var(--tw-text-opacity))"
 			/>
 		</button>
-		<button
-			class="p-2 bg-warning join-item active:bg-primary-focus hover:bg-primary-focus rounded-se-md"
-		>
+		<button class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
 			<Icon
 				icon="line-md:close-to-menu-transition"
 				class="w-8 h-8"
@@ -82,7 +123,7 @@
 						<tr>
 							<td>{item.name}</td>
 							<td>$ {item.amount}</td>
-							<td>{item.date} - 12:00</td>
+							<td>{item.date}</td>
 							<td>
 								<button class="btn btn-xs">Details</button>
 							</td>

@@ -36,6 +36,7 @@
 	"dependencies": {
 		"@types/chart.js": "^2.9.37",
 		"chart.js": "^4.4.0",
+		"svelte-multiselect": "^10.1.0",
 		"theme-change": "^2.5.0"
 	}
 }
