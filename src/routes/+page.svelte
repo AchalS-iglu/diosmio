@@ -4,7 +4,7 @@
 
 	onMount(() => {
 		setTimeout(() => {
-			goto('/welcome/start');
+			goto('/home');
 		}, 1000);
 	});
 </script>
