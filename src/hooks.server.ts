@@ -52,7 +52,6 @@ export const handle: Handle = sequence(
 				})
 			],
 			secret: AUTH_SECRET,
-			adapter: PrismaAdapter(prisma),
 			trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
 			debug: true
 		};
