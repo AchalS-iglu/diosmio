@@ -52,9 +52,9 @@
             gap-2
     "
 	>
-		<a class="btn btn-error justify-self-center" href="/auth/google">
+		<button class="btn btn-error justify-self-center" on:click={() => signIn('google')}>
 			<Icon icon="akar-icons:google-fill" width="20" height="20" />Continue with Google
-		</a>
+		</button>
 		<button class="btn btn-neutral justify-self-center" on:click={() => signIn('github')}>
 			<Icon icon="akar-icons:github-fill" width="20" height="20" />Continue with Github
 		</button>

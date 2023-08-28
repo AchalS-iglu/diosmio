@@ -1,10 +1,18 @@
 import { SvelteKitAuth } from '@auth/sveltekit';
 import GitHub from '@auth/core/providers/github';
+import Google from '@auth/core/providers/google';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '$lib/server/prisma';
-import { AUTH_SECRET, GITHUB_ID, GITHUB_SECRET } from '$env/static/private';
+import {
+	AUTH_SECRET,
+	AUTH_TRUST_HOST,
+	GITHUB_ID,
+	GITHUB_SECRET,
+	GOOGLE_ID,
+	GOOGLE_SECRET
+} from '$env/static/private';
 
 async function authorization({ event, resolve }) {
 	// Protect any routes under /authenticated
@@ -36,11 +44,15 @@ export const handle: Handle = sequence(
 			GitHub({
 				clientId: GITHUB_ID,
 				clientSecret: GITHUB_SECRET
+			}),
+			Google({
+				clientId: GOOGLE_ID,
+				clientSecret: GOOGLE_SECRET
 			})
 		],
 		secret: AUTH_SECRET,
 		adapter: PrismaAdapter(prisma),
-		trustHost: true,
+		trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
 		debug: true
 	}),
 	authorization
