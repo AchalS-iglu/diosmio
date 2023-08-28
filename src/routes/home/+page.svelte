@@ -5,6 +5,7 @@
 	import Pie from '../../components/ExpensesTagsPie.svelte';
 	import { data } from './randomData';
 	import MultiSelect from 'svelte-multiselect';
+	import { signOut } from '@auth/sveltekit/client';
 
 	let range = {
 		start: new Date('2021-08-24'),
@@ -121,14 +122,7 @@
 					</button>
 				</li>
 				<li>
-					<button
-						class="btn btn-sm"
-						on:click={() => {
-							console.log('Logout');
-						}}
-					>
-						Logout
-					</button>
+					<button class="btn btn-sm" on:click={() => signOut()}> Logout </button>
 				</li>
 			</ul>
 		</details>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { signIn } from '@auth/sveltekit/client';
 	import Icon from '@iconify/svelte';
 
 	let form: {
@@ -44,7 +45,7 @@
 	<div>
 		<div class="divider flex w-64">OR</div>
 	</div>
-	<div
+	<divAUTH_SECRET
 		class="
             flex
             flex-col
@@ -54,9 +55,9 @@
 		<a class="btn btn-error justify-self-center" href="/auth/google">
 			<Icon icon="akar-icons:google-fill" width="20" height="20" />Continue with Google
 		</a>
-		<a class="btn btn-neutral justify-self-center" href="/auth/github">
+		<button class="btn btn-neutral justify-self-center" on:click={() => signIn('github')}>
 			<Icon icon="akar-icons:github-fill" width="20" height="20" />Continue with Github
-		</a>
+		</button>
 		<a class="text-center text-xs link text-base-content" href="/login">Already have an account?</a>
-	</div>
+	</divAUTH_SECRET>
 </div>

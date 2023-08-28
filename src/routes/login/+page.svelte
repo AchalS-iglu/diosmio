@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '@iconify/svelte';
+	import { signIn } from '@auth/sveltekit/client';
 
 	let form: {
 		email: string;
@@ -43,9 +44,9 @@
 		<a class="btn btn-error justify-self-center" href="/auth/google">
 			<Icon icon="akar-icons:google-fill" width="20" height="20" />Continue with Google
 		</a>
-		<a class="btn btn-neutral justify-self-center" href="/auth/github">
+		<button class="btn btn-neutral justify-self-center" on:click={() => signIn('github')}>
 			<Icon icon="akar-icons:github-fill" width="20" height="20" />Continue with Github
-		</a>
+		</button>
 		<a class="text-center text-xs link text-base-content" href="/register">Don't have an account?</a
 		>
 	</div>
