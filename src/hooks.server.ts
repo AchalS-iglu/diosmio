@@ -56,5 +56,5 @@ export const handle: Handle = sequence(
 			debug: true
 		};
 	}) satisfies Handle
-	// authorization
+	authorization
 );
