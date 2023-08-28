@@ -3,8 +3,6 @@ import GitHub from '@auth/core/providers/github';
 import Google from '@auth/core/providers/google';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from '$lib/server/prisma';
 import {
 	AUTH_SECRET,
 	AUTH_TRUST_HOST,
@@ -13,6 +11,8 @@ import {
 	GOOGLE_ID,
 	GOOGLE_SECRET
 } from '$env/static/private';
+import clientPromise from '$lib/server/mongo';
+import { MongoDBAdapter } from '@auth/mongodb-adapter';
 
 async function authorization({ event, resolve }) {
 	// Protect any routes under /authenticated
@@ -53,7 +53,8 @@ export const handle: Handle = sequence(
 			],
 			secret: AUTH_SECRET,
 			trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
-			debug: true
+			debug: true,
+			adapter: MongoDBAdapter(clientPromise)
 		};
 	}) satisfies Handle,
 	authorization
