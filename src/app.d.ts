@@ -10,6 +10,13 @@ declare global {
 		interface Platform {
 			env: {
 				COUNTER: DurableObjectNamespace;
+				GITHUB_ID: string;
+				GITHUB_SECRET: string;
+				GOOGLE_ID: string;
+				GOOGLE_SECRET: string;
+				AUTH_SECRET: string;
+				AUTH_TRUST_HOST: string;
+				DB_URL: string;
 			};
 			context: {
 				waitUntil(promise: Promise<any>): void;
