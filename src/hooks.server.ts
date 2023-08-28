@@ -55,6 +55,6 @@ export const handle: Handle = sequence(
 			trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
 			debug: true
 		};
-	}) satisfies Handle
+	}) satisfies Handle,
 	authorization
 );
