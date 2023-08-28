@@ -11,8 +11,9 @@ import {
 	GOOGLE_ID,
 	GOOGLE_SECRET
 } from '$env/static/private';
-import clientPromise from '$lib/server/mongo';
-import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import { prisma } from '$lib/server/prisma';
+
 
 async function authorization({ event, resolve }) {
 	// Protect any routes under /authenticated
@@ -39,23 +40,21 @@ async function authorization({ event, resolve }) {
 // Each function acts as a middleware, receiving the request handle
 // And returning a handle which gets passed to the next function
 export const handle: Handle = sequence(
-	SvelteKitAuth(async (event) => {
-		return {
-			providers: [
-				GitHub({
-					clientId: GITHUB_ID,
-					clientSecret: GITHUB_SECRET
-				}),
-				Google({
-					clientId: GOOGLE_ID,
-					clientSecret: GOOGLE_SECRET
-				})
-			],
-			secret: AUTH_SECRET,
-			trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
-			debug: true,
-			adapter: MongoDBAdapter(clientPromise)
-		};
-	}) satisfies Handle,
+	SvelteKitAuth({
+		providers: [
+			GitHub({
+				clientId: GITHUB_ID,
+				clientSecret: GITHUB_SECRET
+			}),
+			Google({
+				clientId: GOOGLE_ID,
+				clientSecret: GOOGLE_SECRET
+			})
+		],
+		secret: AUTH_SECRET,
+		trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
+		debug: true,
+		adapter: PrismaAdapter(prisma)
+	}),
 	authorization
 );
