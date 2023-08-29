@@ -6,6 +6,7 @@
 	import { data } from './randomData';
 	import MultiSelect from 'svelte-multiselect';
 	import { signOut } from '@auth/sveltekit/client';
+	import CreateExpenseModal from '../../components/CreateExpenseModal.svelte';
 
 	let range = {
 		start: new Date('2021-08-24'),
@@ -25,44 +26,7 @@
 	});
 </script>
 
-<dialog id="addExpense" class="modal">
-	<form method="dialog" class="modal-box">
-		<div class="flex flex-col mb-3">
-			<label class="label" for="expense-title">
-				<span class="label-text">Title</span>
-			</label>
-			<input type="text" id="expense-title" placeholder="Title" class="input input-bordered" />
-		</div>
-		<div class="flex flex-col mb-3">
-			<label class="label" for="expense-tags">
-				<span class="label-text">Tags</span>
-			</label>
-			<MultiSelect
-				options={['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Education']}
-				allowUserOptions={true}
-				id="expense-tags"
-				placeholder="Select or create tags"
-				outerDivClass="input input-bordered"
-			/>
-		</div>
-		<div class="flex flex-col mb-3">
-			<label class="label" for="expense-amount">
-				<span class="label-text">Amount</span>
-			</label>
-			<input type="number" id="expense-amount" placeholder="Amount" class="input input-bordered" />
-		</div>
-		<div class="flex flex-col mb-3">
-			<label class="label" for="expense-date">
-				<span class="label-text">Date</span>
-			</label>
-			<input type="date" id="expense-date" placeholder="Date" class="input input-bordered" />
-		</div>
-		<div class="flex flex-row w-full justify-evenly">
-			<button class="btn btn-primary">Add</button>
-			<button class="btn">Cancel</button>
-		</div>
-	</form>
-</dialog>
+<CreateExpenseModal />
 
 <div class="overflow-y-scroll w-screen h-screen flex flex-col">
 	<hr
