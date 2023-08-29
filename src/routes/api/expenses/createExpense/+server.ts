@@ -1,9 +1,18 @@
 import { prisma } from '$lib/server/prisma.js';
 import type { Expense_t } from '$lib/types.js';
-import { getSession } from '@auth/sveltekit';
-import { error } from '@sveltejs/kit';
 
 export async function POST({ request }) {
+	const sessionToken = request.headers.get('Authorization')?.split(' ')[1];
+	const session = await prisma.session.findUnique({
+		where: {
+			sessionToken: sessionToken
+		}
+	});
+	if (!session || session.expires < new Date()) {
+		return new Response('Unauthorized', {
+			status: 401
+		});
+	}
 	const data = await request.json();
 	if (isDataValid(data)) {
 		try {
@@ -13,7 +22,7 @@ export async function POST({ request }) {
 					amount: data.amount,
 					date: data.date,
 					tags: data.tags,
-					userId: data.userId
+					userId: session.userId
 				}
 			});
 			return new Response(JSON.stringify(expense), { status: 200 });
@@ -30,5 +39,5 @@ export async function POST({ request }) {
 }
 
 function isDataValid(data: Expense_t) {
-	return data.title && data.amount && data.date && data.tags && data.userId;
+	return data.title && data.amount && data.date && data.tags;
 }

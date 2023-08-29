@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import type { Expense_t } from '$lib/types';
+	import { expensesStore } from '$lib/stores';
 	import toast from 'svelte-french-toast';
 	import { MultiSelect } from 'svelte-multiselect';
 
-	let form: Omit<Expense_t, 'id'> = {
+	let form = {
 		tags: [],
 		amount: 0,
 		date: new Date(),
-		title: '',
-		userId: $page.data.session?.user?.id ?? 'no id'
+		title: ''
 	};
 
 	const sendCreateExpenseRequest = () => {
@@ -17,12 +16,20 @@
 			fetch('/api/expenses/createExpense', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					// get auth from cookie
+					Authorization: `Bearer ${$page.data.session?.user.token}`
 				},
 				body: JSON.stringify({
 					...form,
 					date: new Date(form.date).toISOString()
 				})
+			}).then((res) => {
+				if (res.ok) {
+					res.json().then((expense) => {
+						expensesStore.update((expenses) => [expense, ...expenses]);
+					});
+				}
 			}),
 			{
 				success: 'Expense added successfully',
@@ -45,6 +52,7 @@
 				placeholder="Title"
 				class="input input-bordered"
 				bind:value={form.title}
+				required
 			/>
 		</div>
 		<div class="flex flex-col mb-3">
@@ -58,6 +66,7 @@
 				placeholder="Select or create tags"
 				outerDivClass="input input-bordered"
 				bind:value={form.tags}
+				required
 			/>
 		</div>
 		<div class="flex flex-col mb-3">
@@ -70,6 +79,7 @@
 				placeholder="Amount"
 				class="input input-bordered"
 				bind:value={form.amount}
+				required
 			/>
 		</div>
 		<div class="flex flex-col mb-3">
@@ -82,6 +92,7 @@
 				placeholder="Date"
 				class="input input-bordered"
 				bind:value={form.date}
+				required
 			/>
 		</div>
 		<div class="flex flex-row w-full justify-evenly">
