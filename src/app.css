@@ -212,3 +212,35 @@
 .blankInput {
 	@apply bg-transparent border-none outline-none;
 }
+
+.animated {
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	--overflow: 0px;
+}
+
+.text-animated {
+	animation: backAndForth 3s linear infinite;
+}
+
+@keyframes backAndForth {
+	0% {
+		transform: translateX(0);
+	}
+	10% {
+		transform: translateX(0);
+	}
+	45% {
+		transform: translateX(var(--overflow));
+	}
+	55% {
+		transform: translateX(var(--overflow));
+	}
+	90% {
+		transform: translateX(0);
+	}
+	100% {
+		transform: translateX(0);
+	}
+}
