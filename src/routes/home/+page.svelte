@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getDateRange, visibleDate } from '$lib/utils';
+	import { formDatetoObject, getDateRange, objecttoFormDate, visibleDate } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import Pie from '../../components/ExpensesTagsPie.svelte';
@@ -28,7 +28,10 @@
 	let subtractingFunds: boolean = false;
 	let fundsForm: number | null;
 
-	let dateRangeForm: [Date, Date] = [$dateRangeStore[0], $dateRangeStore[1]];
+	let dateRangeForm: [string, string] = [
+		objecttoFormDate($dateRangeStore[0]),
+		objecttoFormDate($dateRangeStore[1])
+	];
 
 	function findTagWithHighestSpendage(expenses: Expense_t[]): string {
 		if (expenses.length === 0) return 'None';
@@ -75,7 +78,7 @@
 		fundsForm = 0;
 	}
 
-	$: console.log(overflow);
+	$: console.log($dateRangeStore);
 
 	onMount(() => {
 		hamburgerMebu?.addEventListener('toggle', () => {
@@ -103,13 +106,14 @@
 		});
 
 		fetch(`/api/expenses/getExpenses
-		?start=${$dateRangeStore[0]}
-		&end=${$dateRangeStore[1]}
-		`)
-			.then((res) => res.json())
-			.then((res) => {
-				expensesStore.set(res);
-			});
+		?start=${$dateRangeStore[0].toDateString()}
+		&end=${$dateRangeStore[1].toDateString()}
+		`).then(async (res) => {
+			console.log(res);
+			if (res.status === 200) {
+				expensesStore.set(await res.json());
+			}
+		});
 		fetch(`/api/user/getUserData`)
 			.then((res) => res.json())
 			.then((res) => {
@@ -158,10 +162,13 @@
 					<button
 						class="btn btn-sm btn-success w-full"
 						on:click={() => {
-							dateRangeStore.set(dateRangeForm);
+							dateRangeStore.set([
+								formDatetoObject(dateRangeForm[0]),
+								formDatetoObject(dateRangeForm[1])
+							]);
 							fetch(`/api/expenses/getExpenses
-						?start=${dateRangeForm[0]}
-						&end=${dateRangeForm[1]}
+						?start=${$dateRangeStore[0].toDateString()}
+						&end=${$dateRangeStore[1].toDateString()}
 						`)
 								.then((res) => res.json())
 								.then((res) => {

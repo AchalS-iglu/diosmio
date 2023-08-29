@@ -84,3 +84,15 @@ export function getCookie(cname: string) {
 	}
 	return '';
 }
+
+export function formDatetoObject(formDate: string) {
+	return new Date(
+		parseInt(formDate.split('-')[0]),
+		parseInt(formDate.split('-')[1]) - 1,
+		parseInt(formDate.split('-')[2])
+	);
+}
+
+export function objecttoFormDate(date: Date) {
+	return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+}

@@ -5,20 +5,32 @@ import { GetAuth } from '$lib/server/serverUtils.js';
 export async function GET({ cookies, url }) {
 	const s = await GetAuth(cookies);
 	if (!s) return new Response('Unauthorized', { status: 401 });
-	const start = new Date(url.searchParams.get('start') || new Date().toISOString().split('T')[0]);
-	const end = new Date(url.searchParams.get('end') || new Date().toISOString().split('T')[0]);
-	const expenses = await prisma.expense.findMany({
-		where: {
-			userId: s.userId,
-			date: {
-				gte: start,
-				lte: end
+	const start = new Date(url.searchParams.get('start'));
+	const end = new Date(url.searchParams.get('end'));
+	console.log(start, end);
+	if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+		return new Response('Invalid date', {
+			status: 400
+		});
+	}
+	const expenses = await prisma.expense
+		.findMany({
+			where: {
+				userId: s.userId,
+				date: {
+					gte: start,
+					lte: end
+				}
+			},
+			orderBy: {
+				date: 'desc'
 			}
-		},
-		orderBy: {
-			date: 'desc'
-		}
-	});
+		})
+		.catch((err) => {
+			return new Response(err, {
+				status: 500
+			});
+		});
 
 	if (!expenses) {
 		return new Response('No expenses found', {
@@ -27,6 +39,7 @@ export async function GET({ cookies, url }) {
 	}
 
 	return new Response(JSON.stringify(expenses), {
+		status: 200,
 		headers: {
 			'Content-Type': 'application/json'
 		}
