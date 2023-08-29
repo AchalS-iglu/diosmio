@@ -55,3 +55,32 @@ export const getThemesfromLS = () => {
 	const theme = localStorage.getItem('theme');
 	return theme ? theme : 'retro';
 };
+
+export const visibleDate = (date: Date) => {
+	const today = new Date();
+	const yesterday = new Date(today);
+	yesterday.setDate(yesterday.getDate() - 1);
+	if (date.toDateString() === today.toDateString()) {
+		return 'Today';
+	} else if (date.toDateString() === yesterday.toDateString()) {
+		return 'Yesterday';
+	} else {
+		return date.toLocaleString('default', { month: 'short' }) + ' ' + date.getDate();
+	}
+};
+
+export function getCookie(cname: string) {
+	const name = cname + '=';
+	const decodedCookie = decodeURIComponent(document.cookie);
+	const ca = decodedCookie.split(';');
+	for (let i = 0; i < ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+			return c.substring(name.length, c.length);
+		}
+	}
+	return '';
+}

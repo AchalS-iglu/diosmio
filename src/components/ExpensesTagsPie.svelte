@@ -39,7 +39,6 @@
 		const otherTotal = sortedTags.slice(4).reduce((acc, tag) => acc + tagsData[tag], 0);
 
 		const theme = getThemesfromLS();
-		console.log(themes[`[data-theme=${theme}]`]);
 
 		chart = new Chart(ctx, {
 			type: 'pie',

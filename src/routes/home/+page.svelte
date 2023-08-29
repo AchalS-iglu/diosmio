@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getDateRange } from '$lib/utils';
+	import { getDateRange, visibleDate } from '$lib/utils';
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import Pie from '../../components/ExpensesTagsPie.svelte';
@@ -7,6 +7,9 @@
 	import MultiSelect from 'svelte-multiselect';
 	import { signOut } from '@auth/sveltekit/client';
 	import CreateExpenseModal from '../../components/CreateExpenseModal.svelte';
+	import { page } from '$app/stores';
+	import type { Expense_t } from '$lib/types';
+	import { expensesStore } from '$lib/stores';
 
 	let range = {
 		start: new Date('2021-08-24'),
@@ -23,6 +26,12 @@
 		details.addEventListener('toggle', () => {
 			menuOpen = details.open;
 		});
+
+		fetch(`/api/expenses/getExpenses`)
+			.then((res) => res.json())
+			.then((res) => {
+				expensesStore.set(res);
+			});
 	});
 </script>
 
@@ -169,13 +178,43 @@
 					</tr>
 				</thead>
 				<tbody>
-					{#each data as item}
+					{#each $expensesStore as expense}
 						<tr>
-							<td>{item.name}</td>
-							<td>$ {item.amount}</td>
-							<td>{item.date}</td>
-							<td>
-								<button class="btn btn-xs">Details</button>
+							<td>{expense.title}</td>
+							<td>$ {expense.amount}</td>
+							<td>{visibleDate(new Date(expense.date))}</td>
+							<td class="join">
+								<button
+									class="
+										btn btn-sm btn-warning
+										join-item
+								"
+								>
+									<Icon icon="ic:round-edit" class="w-4 h-4" />
+								</button>
+								<button
+									class="
+										btn btn-sm btn-error
+										join-item
+								"
+								on:click={
+									() => {
+										fetch(`/api/expenses/deleteExpense/${expense.id}`, {
+											method: 'DELETE'
+										})
+											.then((res) => res.json())
+											.then((res) => {
+												if (res.success) {
+													expensesStore.update((expenses) =>
+														expenses.filter((e) => e.id !== expense.id)
+													);
+												}
+											});
+									}
+								}
+								>
+									<Icon icon="ic:sharp-delete" class="w-4 h-4" />
+								</button>
 							</td>
 						</tr>
 					{/each}
