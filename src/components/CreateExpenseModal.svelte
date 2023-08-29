@@ -4,6 +4,7 @@
 		balanceStore,
 		dateRangeStore,
 		expensesStore,
+		tagsStore,
 		totalExpensesStore,
 		yearlyExpensesStore
 	} from '$lib/stores';
@@ -80,7 +81,7 @@
 				<span class="label-text">Tags</span>
 			</label>
 			<MultiSelect
-				options={['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Education']}
+				options={Object.keys($tagsStore).map((tag) => tag)}
 				allowUserOptions={true}
 				id="expense-tags"
 				placeholder="Select or create tags"

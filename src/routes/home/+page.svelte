@@ -11,6 +11,7 @@
 		balanceStore,
 		dateRangeStore,
 		expensesStore,
+		tagsStore,
 		totalExpensesStore,
 		yearlyExpensesStore
 	} from '$lib/stores';
@@ -80,7 +81,25 @@
 		fundsForm = 0;
 	}
 
-	$: console.log($dateRangeStore);
+	$expensesStore.forEach((item) => {
+		item.tags.forEach((tag) => {
+			if ($tagsStore[tag]) {
+				tagsStore.update((tags) => {
+					return {
+						...tags,
+						[tag]: tags[tag] + item.amount
+					};
+				});
+			} else {
+				tagsStore.update((tags) => {
+					return {
+						...tags,
+						[tag]: item.amount
+					};
+				});
+			}
+		});
+	});
 
 	onMount(() => {
 		hamburgerMebu?.addEventListener('toggle', () => {

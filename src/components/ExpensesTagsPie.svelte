@@ -3,43 +3,33 @@
 	import Chart from 'chart.js/auto';
 	import themes from 'daisyui/src/theming/themes';
 	import { getThemesfromLS } from '$lib/utils';
-	import { expensesStore } from '$lib/stores';
+	import { expensesStore, tagsStore } from '$lib/stores';
 
 	let chart;
 
 	onMount(() => {
 		const ctx = document.getElementById('myChart') as HTMLCanvasElement;
 
-		const tagsData: {
-			[key: string]: number;
-		} = {};
-
-		$expensesStore.forEach((item) => {
-			item.tags.forEach((tag) => {
-				if (tagsData[tag]) {
-					tagsData[tag] += item.amount;
-				} else {
-					tagsData[tag] = item.amount;
-				}
-			});
-		});
-
 		// Sort tags by total amount in descending order
-		const sortedTags = Object.keys(tagsData).sort((a, b) => tagsData[b] - tagsData[a]);
+		const sortedTags = Object.keys($tagsStore).sort((a, b) => $tagsStore[b] - $tagsStore[a]);
 
 		// Keep only the highest 4 tags and put the rest in an "Others" category
+
 		const topTags = sortedTags.slice(0, 4);
-		const otherTotal = sortedTags.slice(4).reduce((acc, tag) => acc + tagsData[tag], 0);
+		const otherTotal = sortedTags.slice(4).reduce((acc, tag) => acc + $tagsStore[tag], 0);
 
 		const theme = getThemesfromLS();
 
 		chart = new Chart(ctx, {
 			type: 'pie',
 			data: {
-				labels: [...topTags, 'Others'],
+				labels: topTags.length <= 4 ? topTags : [...topTags, 'Others'],
 				datasets: [
 					{
-						data: [...topTags.map((tag) => tagsData[tag]), otherTotal],
+						data:
+							topTags.length <= 4
+								? topTags.map((tag) => $tagsStore[tag])
+								: [...topTags.map((tag) => $tagsStore[tag]), otherTotal],
 						backgroundColor: [
 							// @ts-ignore
 							themes[`[data-theme=${theme}]`].accent,
