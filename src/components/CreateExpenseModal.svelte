@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import {
+		balanceStore,
 		dateRangeStore,
 		expensesStore,
 		totalExpensesStore,
@@ -46,6 +47,7 @@
 							};
 						});
 						totalExpensesStore.update((x) => x + expense.amount);
+						balanceStore.update((x) => x - expense.amount);
 					});
 				}
 			}),

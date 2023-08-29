@@ -21,7 +21,8 @@ export async function POST({ request }) {
 				},
 				select: {
 					yearlyExpenses: true,
-					totalExpenses: true
+					totalExpenses: true,
+					balance: true
 				}
 			});
 			if (!user) {
@@ -44,7 +45,8 @@ export async function POST({ request }) {
 								? user?.yearlyExpenses?.[`year${new Date(data.date).getFullYear()}`] + data.amount
 								: data.amount
 						},
-						totalExpenses: user?.totalExpenses ? user?.totalExpenses + data.amount : data.amount
+						totalExpenses: user?.totalExpenses ? user?.totalExpenses + data.amount : data.amount,
+						balance: user?.balance ? user?.balance - data.amount : -data.amount
 					}
 				})
 			]);
