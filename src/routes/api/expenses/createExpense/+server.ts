@@ -1,18 +1,10 @@
 import { prisma } from '$lib/server/prisma.js';
 import type { Expense_t } from '$lib/types.js';
+import { PostAuth } from '$lib/utils.js';
 
 export async function POST({ request }) {
-	const sessionToken = request.headers.get('Authorization')?.split(' ')[1];
-	const session = await prisma.session.findUnique({
-		where: {
-			sessionToken: sessionToken
-		}
-	});
-	if (!session || session.expires < new Date()) {
-		return new Response('Unauthorized', {
-			status: 401
-		});
-	}
+	const s = await PostAuth(request);
+	if (!s) return new Response('Unauthorized', { status: 401 });
 	const data = await request.json();
 	if (isDataValid(data)) {
 		try {
@@ -21,11 +13,11 @@ export async function POST({ request }) {
 				amount: data.amount,
 				date: data.date,
 				tags: data.tags,
-				userId: session.userId
+				userId: s.userId
 			};
 			const user = await prisma.user.findUnique({
 				where: {
-					id: session.userId
+					id: s.userId
 				},
 				select: {
 					yearlyExpenses: true,
@@ -41,7 +33,7 @@ export async function POST({ request }) {
 				}),
 				prisma.user.update({
 					where: {
-						id: session.userId
+						id: s.userId
 					},
 					data: {
 						yearlyExpenses: {

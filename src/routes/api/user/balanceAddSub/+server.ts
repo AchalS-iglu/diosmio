@@ -1,19 +1,9 @@
 import { prisma } from '$lib/server/prisma';
-import type { RequestHandler } from './$types';
+import { PostAuth } from '$lib/utils.js';
 
-export async function POST({ request }) {
-	// const sessionToken = req.cookies['next-auth.session-token'];
-	const sessionToken = request.headers.get('Authorization')?.split(' ')[1];
-	const session = await prisma.session.findUnique({
-		where: {
-			sessionToken: sessionToken
-		}
-	});
-	if (!session || session.expires < new Date()) {
-		return new Response('Unauthorized', {
-			status: 401
-		});
-	}
+export async function POST({ request, cookies }) {
+	const s = await PostAuth(cookies);
+	if (!s) return new Response('Unauthorized', { status: 401 });
 	const { amount, type } = await request.json();
 	if (isNaN(amount)) {
 		return new Response('Amount is not a number', {
@@ -23,55 +13,31 @@ export async function POST({ request }) {
 		return new Response('Amount is negative', {
 			status: 400
 		});
+	} else if (type !== 'add' && type !== 'sub') {
+		return new Response('Type is not add or sub', {
+			status: 400
+		});
 	}
-	if (type == 'add') {
-		await prisma.user
-			.update({
-				where: {
-					id: session.userId
-				},
-				data: {
-					balance: {
-						increment: amount
-					}
+	const res = await prisma.user
+		.update({
+			where: {
+				id: s.userId
+			},
+			data: {
+				balance: {
+					[type === 'add' ? 'increment' : 'decrement']: amount
 				}
-			})
-			.then(() => {
-				return new Response('OK', {
-					status: 200
-				});
-			})
-			.catch((err) => {
-				console.log(err);
-				return new Response(err, {
-					status: 500
-				});
+			}
+		})
+		.catch((err) => {
+			console.log(err);
+			return new Response(err, {
+				status: 500
 			});
-	} else if (type == 'sub') {
-		await prisma.user
-			.update({
-				where: {
-					id: session.userId
-				},
-				data: {
-					balance: {
-						decrement: amount
-					}
-				}
-			})
-			.then(() => {
-				return new Response('OK', {
-					status: 200
-				});
-			})
-			.catch((err) => {
-				console.log(err);
-				return new Response(err, {
-					status: 500
-				});
-			});
-	}
-	return new Response('Invalid type', {
-		status: 400
+		});
+	return new Response(JSON.stringify(res), {
+		headers: {
+			'Content-Type': 'application/json'
+		}
 	});
 }
