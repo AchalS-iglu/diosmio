@@ -1,8 +1,8 @@
 import { prisma } from '$lib/server/prisma';
-import { PostAuth } from '$lib/utils.js';
+import { PostAuth } from '$lib/server/serverUtils.js';
 
-export async function POST({ request, cookies }) {
-	const s = await PostAuth(cookies);
+export async function POST({ request }) {
+	const s = await PostAuth(request);
 	if (!s) return new Response('Unauthorized', { status: 401 });
 	const { amount, type } = await request.json();
 	if (isNaN(amount)) {
@@ -18,26 +18,38 @@ export async function POST({ request, cookies }) {
 			status: 400
 		});
 	}
+	const currentBalance = await prisma.user.findUnique({
+		where: {
+			id: s.userId
+		},
+		select: {
+			balance: true
+		}
+	});
 	const res = await prisma.user
 		.update({
 			where: {
 				id: s.userId
 			},
 			data: {
-				balance: {
-					[type === 'add' ? 'increment' : 'decrement']: amount
-				}
+				balance: currentBalance
+					? type === 'add'
+						? currentBalance.balance + amount
+						: currentBalance.balance - amount
+					: amount
 			}
 		})
 		.catch((err) => {
-			console.log(err);
 			return new Response(err, {
 				status: 500
 			});
 		});
-	return new Response(JSON.stringify(res), {
-		headers: {
-			'Content-Type': 'application/json'
+	return new Response(
+		JSON.stringify({
+			balance: res.balance
+		}),
+		{
+			status: 200
 		}
-	});
+	);
 }

@@ -15,6 +15,7 @@
 		yearlyExpensesStore
 	} from '$lib/stores';
 	import { page } from '$app/stores';
+	import toast from 'svelte-french-toast';
 
 	let hamburgerMebu: HTMLDetailsElement | null = null;
 	let menuOpen: boolean = false;
@@ -25,7 +26,7 @@
 
 	let addingFunds: boolean = false;
 	let subtractingFunds: boolean = false;
-	let fundsForm: number = 0;
+	let fundsForm: number | null;
 
 	let dateRangeForm: [Date, Date] = [$dateRangeStore[0], $dateRangeStore[1]];
 
@@ -45,6 +46,33 @@
 			tagSpendageMap[a] > tagSpendageMap[b] ? a : b
 		);
 		return highestSpendageTag;
+	}
+
+	function handleFundsUpdate(type: 'add' | 'sub') {
+		if (fundsForm === null) {
+			toast.error('Please enter a valid amount');
+			return;
+		}
+		fetch(`/api/user/balanceAddSub`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${$page.data.session?.user.token}`
+			},
+			body: JSON.stringify({
+				amount: fundsForm,
+				type: type
+			})
+		})
+			.then((res) => res.json())
+			.then((res) => {
+				if (res.balance) {
+					balanceStore.set(res.balance);
+				}
+			});
+		subtractingFunds = false;
+		addingFunds = false;
+		fundsForm = 0;
 	}
 
 	$: console.log(overflow);
@@ -130,7 +158,7 @@
 					<button
 						class="btn btn-sm btn-success w-full"
 						on:click={() => {
-							$dateRangeStore.set(dateRangeForm);
+							dateRangeStore.set(dateRangeForm);
 							fetch(`/api/expenses/getExpenses
 						?start=${dateRangeForm[0]}
 						&end=${dateRangeForm[1]}
@@ -232,25 +260,7 @@
 						<button
 							class="btn btn-sm btn-success join-item"
 							on:click={() => {
-								fetch(`/api/user/balanceAddSub`, {
-									method: 'POST',
-									headers: {
-										'Content-Type': 'application/json',
-										Authorization: `Bearer ${$page.data.session?.user.token}`
-									},
-									body: JSON.stringify({
-										amount: fundsForm,
-										type: 'add'
-									})
-								})
-									.then((res) => res.json())
-									.then((res) => {
-										if (res.success) {
-											balanceStore.update((balance) => balance + fundsForm);
-										}
-									});
-								addingFunds = false;
-								fundsForm = 0;
+								handleFundsUpdate('add');
 							}}
 						>
 							<Icon icon="line-md:confirm" class="w-4 h-4" />
@@ -270,25 +280,7 @@
 						<button
 							class="btn btn-sm btn-warning join-item"
 							on:click={() => {
-								fetch(`/api/user/balanceAddSub`, {
-									method: 'POST',
-									headers: {
-										'Content-Type': 'application/json',
-										Authorization: `Bearer ${$page.data.session?.user.token}`
-									},
-									body: JSON.stringify({
-										amount: fundsForm,
-										type: 'sub'
-									})
-								})
-									.then((res) => res.json())
-									.then((res) => {
-										if (res.success) {
-											balanceStore.update((balance) => balance - fundsForm);
-										}
-									});
-								subtractingFunds = false;
-								fundsForm = 0;
+								handleFundsUpdate('sub');
 							}}
 						>
 							<Icon icon="line-md:confirm" class="w-4 h-4" />

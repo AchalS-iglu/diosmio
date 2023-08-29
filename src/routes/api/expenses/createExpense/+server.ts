@@ -1,6 +1,6 @@
 import { prisma } from '$lib/server/prisma.js';
+import { PostAuth } from '$lib/server/serverUtils.js';
 import type { Expense_t } from '$lib/types.js';
-import { PostAuth } from '$lib/utils.js';
 
 export async function POST({ request }) {
 	const s = await PostAuth(request);

@@ -1,6 +1,6 @@
 import { USER } from '$env/static/private';
 import { prisma } from '$lib/server/prisma.js';
-import { GetAuth } from '$lib/utils.js';
+import { GetAuth } from '$lib/server/serverUtils.js';
 
 export async function GET({ cookies, url }) {
 	const s = await GetAuth(cookies);

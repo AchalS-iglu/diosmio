@@ -1,5 +1,5 @@
 import { prisma } from '$lib/server/prisma';
-import { GetAuth } from '$lib/utils';
+import { GetAuth } from '$lib/server/serverUtils';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ cookies }) => {
