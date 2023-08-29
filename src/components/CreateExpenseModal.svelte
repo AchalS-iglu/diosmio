@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import {
+		balanceStore,
 		dateRangeStore,
 		expensesStore,
+		tagsStore,
 		totalExpensesStore,
 		yearlyExpensesStore
 	} from '$lib/stores';
@@ -46,6 +48,7 @@
 							};
 						});
 						totalExpensesStore.update((x) => x + expense.amount);
+						balanceStore.update((x) => x - expense.amount);
 					});
 				}
 			}),
@@ -78,7 +81,7 @@
 				<span class="label-text">Tags</span>
 			</label>
 			<MultiSelect
-				options={['Food', 'Transport', 'Shopping', 'Entertainment', 'Health', 'Education']}
+				options={Object.keys($tagsStore).map((tag) => tag)}
 				allowUserOptions={true}
 				id="expense-tags"
 				placeholder="Select or create tags"

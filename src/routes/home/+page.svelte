@@ -11,6 +11,7 @@
 		balanceStore,
 		dateRangeStore,
 		expensesStore,
+		tagsStore,
 		totalExpensesStore,
 		yearlyExpensesStore
 	} from '$lib/stores';
@@ -32,6 +33,8 @@
 		objecttoFormDate($dateRangeStore[0]),
 		objecttoFormDate($dateRangeStore[1])
 	];
+
+	let expenseDetailsModalId: string | null;
 
 	function findTagWithHighestSpendage(expenses: Expense_t[]): string {
 		if (expenses.length === 0) return 'None';
@@ -78,7 +81,25 @@
 		fundsForm = 0;
 	}
 
-	$: console.log($dateRangeStore);
+	$expensesStore.forEach((item) => {
+		item.tags.forEach((tag) => {
+			if ($tagsStore[tag]) {
+				tagsStore.update((tags) => {
+					return {
+						...tags,
+						[tag]: tags[tag] + item.amount
+					};
+				});
+			} else {
+				tagsStore.update((tags) => {
+					return {
+						...tags,
+						[tag]: item.amount
+					};
+				});
+			}
+		});
+	});
 
 	onMount(() => {
 		hamburgerMebu?.addEventListener('toggle', () => {
@@ -174,7 +195,7 @@
 								.then((res) => {
 									expensesStore.set(res);
 								});
-							fetch(`/api/user/getYearlyTotalExpenses`)
+							fetch(`/api/user/getUserData`)
 								.then((res) => res.json())
 								.then((res) => {
 									yearlyExpensesStore.set(res.yearlyExpenses);
@@ -356,16 +377,19 @@ w-x-auto"
 								"
 									on:click={() => {
 										fetch(`/api/expenses/deleteExpense/${expense.id}`, {
-											method: 'DELETE'
-										})
-											.then((res) => res.json())
-											.then((res) => {
-												if (res.success) {
-													expensesStore.update((expenses) =>
-														expenses.filter((e) => e.id !== expense.id)
-													);
-												}
-											});
+											method: 'DELETE',
+											headers: {
+												Authorization: `Bearer ${$page.data.session?.user.token}`
+											}
+										}).then(async (res) => {
+											const body = await res.json();
+											console.log(body);
+											if (body.id) {
+												expensesStore.update((expenses) =>
+													expenses.filter((e) => e.id !== body.id)
+												);
+											}
+										});
 									}}
 								>
 									<Icon icon="ic:sharp-delete" class="w-4 h-4" />
