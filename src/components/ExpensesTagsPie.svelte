@@ -3,16 +3,9 @@
 	import Chart from 'chart.js/auto';
 	import themes from 'daisyui/src/theming/themes';
 	import { getThemesfromLS } from '$lib/utils';
+	import { expensesStore } from '$lib/stores';
 
 	let chart;
-
-	export let data: {
-		id: string;
-		name: string;
-		tag: string[];
-		amount: number;
-		date: string;
-	}[];
 
 	onMount(() => {
 		const ctx = document.getElementById('myChart') as HTMLCanvasElement;
@@ -21,8 +14,8 @@
 			[key: string]: number;
 		} = {};
 
-		data.forEach((item) => {
-			item.tag.forEach((tag) => {
+		$expensesStore.forEach((item) => {
+			item.tags.forEach((tag) => {
 				if (tagsData[tag]) {
 					tagsData[tag] += item.amount;
 				} else {
@@ -46,7 +39,7 @@
 				labels: [...topTags, 'Others'],
 				datasets: [
 					{
-						data: [4000, 2000, 3000, 3000, 1000, 1500],
+						data: [...topTags.map((tag) => tagsData[tag]), otherTotal],
 						backgroundColor: [
 							// @ts-ignore
 							themes[`[data-theme=${theme}]`].accent,

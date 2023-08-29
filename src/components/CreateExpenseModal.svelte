@@ -115,7 +115,14 @@
 		</div>
 		<div class="flex flex-row w-full justify-evenly">
 			<button class="btn btn-primary" type="submit">Add</button>
-			<button class="btn">Cancel</button>
+			<button
+				class="btn"
+				on:click={(e) => {
+					e.preventDefault();
+					const dialog = document.getElementById('addExpense');
+					dialog.close();
+				}}>Cancel</button
+			>
 		</div>
 	</form>
 </dialog>

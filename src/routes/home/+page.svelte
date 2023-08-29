@@ -318,7 +318,7 @@
 		</div>
 	</div>
 	<div class="card bg-base-300 shadow h-48 mx-3 mt-3 p-2">
-		<Pie {data} />
+		<Pie />
 	</div>
 	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3">
 		<div
