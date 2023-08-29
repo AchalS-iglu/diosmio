@@ -8,3 +8,4 @@ export const dateRangeStore = writable<[Date, Date]>([
 	new Date(`${new Date().getMonth() + 1}-1-${new Date().getFullYear()}`),
 	new Date(`${new Date().getMonth() + 1}-31-${new Date().getFullYear()}`)
 ]);
+export const balanceStore = writable<number>(0);

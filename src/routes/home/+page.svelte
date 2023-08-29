@@ -8,11 +8,13 @@
 	import CreateExpenseModal from '../../components/CreateExpenseModal.svelte';
 	import type { Expense_t } from '$lib/types';
 	import {
+		balanceStore,
 		dateRangeStore,
 		expensesStore,
 		totalExpensesStore,
 		yearlyExpensesStore
 	} from '$lib/stores';
+	import { page } from '$app/stores';
 
 	let hamburgerMebu: HTMLDetailsElement | null = null;
 	let menuOpen: boolean = false;
@@ -23,6 +25,9 @@
 
 	let addingFunds: boolean = false;
 	let subtractingFunds: boolean = false;
+	let fundsForm: number = 0;
+
+	let dateRangeForm: [Date, Date] = [$dateRangeStore[0], $dateRangeStore[1]];
 
 	function findTagWithHighestSpendage(expenses: Expense_t[]): string {
 		if (expenses.length === 0) return 'None';
@@ -77,11 +82,12 @@
 			.then((res) => {
 				expensesStore.set(res);
 			});
-		fetch(`/api/user/getYearlyTotalExpenses`)
+		fetch(`/api/user/getUserData`)
 			.then((res) => res.json())
 			.then((res) => {
 				yearlyExpensesStore.set(res.yearlyExpenses);
 				totalExpensesStore.set(res.totalExpenses);
+				balanceStore.set(res.balance);
 			});
 	});
 </script>
@@ -109,16 +115,40 @@
 				})}
 			</p>
 		</div>
-		<details class="dropdown dropdown-bottom join-item bg-secondary">
-			<summary class="flex rounded-full h-full w-12 justify-center items-center">
+		<details class="dropdown dropdown-end">
+			<summary class="flex h-full w-12 justify-center items-center bg-secondary join-item">
 				<Icon icon="line-md:calendar" class="w-8 h-8 text-primary-content" />
 			</summary>
-			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-32">
+			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 gap-2">
 				<li class="input">
-					<input type="date" class="input input-sm w-full" bind:value={$dateRangeStore[0]} />
+					<input type="date" class="input input-md w-full" bind:value={dateRangeForm[0]} />
 				</li>
 				<li class="input">
-					<input type="date" class="input input-sm w-full" bind:value={$dateRangeStore[1]} />
+					<input type="date" class="input input-md w-full" bind:value={dateRangeForm[1]} />
+				</li>
+				<li class="button">
+					<button
+						class="btn btn-sm btn-success w-full"
+						on:click={() => {
+							$dateRangeStore.set(dateRangeForm);
+							fetch(`/api/expenses/getExpenses
+						?start=${dateRangeForm[0]}
+						&end=${dateRangeForm[1]}
+						`)
+								.then((res) => res.json())
+								.then((res) => {
+									expensesStore.set(res);
+								});
+							fetch(`/api/user/getYearlyTotalExpenses`)
+								.then((res) => res.json())
+								.then((res) => {
+									yearlyExpensesStore.set(res.yearlyExpenses);
+									totalExpensesStore.set(res.totalExpenses);
+								});
+						}}
+					>
+						Apply
+					</button>
 				</li>
 			</ul>
 		</details>
@@ -176,7 +206,7 @@
 	>
 		<div class="stat">
 			<div class="stat-title">Balance</div>
-			<div class="stat-value text-3xl">$89,400</div>
+			<div class="stat-value text-3xl">${$balanceStore.toLocaleString()}</div>
 			<div class="stat-actions">
 				{#if !addingFunds && !subtractingFunds}
 					<div class="flex flex-row join">
@@ -197,8 +227,32 @@
 							type="number"
 							class="input input-sm w-12 grow join-item [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 							placeholder="$$$$$$$$$"
+							bind:value={fundsForm}
 						/>
-						<button class="btn btn-sm btn-success join-item">
+						<button
+							class="btn btn-sm btn-success join-item"
+							on:click={() => {
+								fetch(`/api/user/balanceAddSub`, {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+										Authorization: `Bearer ${$page.data.session?.user.token}`
+									},
+									body: JSON.stringify({
+										amount: fundsForm,
+										type: 'add'
+									})
+								})
+									.then((res) => res.json())
+									.then((res) => {
+										if (res.success) {
+											balanceStore.update((balance) => balance + fundsForm);
+										}
+									});
+								addingFunds = false;
+								fundsForm = 0;
+							}}
+						>
 							<Icon icon="line-md:confirm" class="w-4 h-4" />
 						</button>
 						<button class="btn btn-sm btn-error join-item" on:click={() => (addingFunds = false)}>
@@ -211,8 +265,32 @@
 							type="number"
 							class="input input-sm w-12 grow join-item [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
 							placeholder="$$$$$$$$$"
+							bind:value={fundsForm}
 						/>
-						<button class="btn btn-sm btn-warning join-item">
+						<button
+							class="btn btn-sm btn-warning join-item"
+							on:click={() => {
+								fetch(`/api/user/balanceAddSub`, {
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+										Authorization: `Bearer ${$page.data.session?.user.token}`
+									},
+									body: JSON.stringify({
+										amount: fundsForm,
+										type: 'sub'
+									})
+								})
+									.then((res) => res.json())
+									.then((res) => {
+										if (res.success) {
+											balanceStore.update((balance) => balance - fundsForm);
+										}
+									});
+								subtractingFunds = false;
+								fundsForm = 0;
+							}}
+						>
 							<Icon icon="line-md:confirm" class="w-4 h-4" />
 						</button>
 						<button
