@@ -19,7 +19,6 @@ async function authorization({ event, resolve }) {
 	// Protect any routes under /authenticated
 	if (event.url.pathname == '/home') {
 		const session = await event.locals.getSession();
-		console.log(session);
 		if (!session) {
 			throw redirect(303, '/login');
 		}
@@ -57,15 +56,14 @@ export const handle: Handle = sequence(
 		adapter: PrismaAdapter(prisma),
 		callbacks: {
 			session: async function ({ session, token, user }) {
-				const getToken = await prisma.session.findFirst({
+				const sessionP = await prisma.session.findFirst({
 					where: {
 						userId: user.id
 					}
 				});
-
 				let sessionToken: string | null = null;
-				if (getToken) {
-					sessionToken = getToken.sessionToken!;
+				if (sessionP) {
+					sessionToken = sessionP.sessionToken!;
 				}
 
 				session.user.token = sessionToken;

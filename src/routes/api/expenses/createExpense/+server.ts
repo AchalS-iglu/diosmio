@@ -16,16 +16,47 @@ export async function POST({ request }) {
 	const data = await request.json();
 	if (isDataValid(data)) {
 		try {
-			const expense = await prisma.expense.create({
-				data: {
-					title: data.title,
-					amount: data.amount,
-					date: data.date,
-					tags: data.tags,
-					userId: session.userId
+			const payload = {
+				title: data.title,
+				amount: data.amount,
+				date: data.date,
+				tags: data.tags,
+				userId: session.userId
+			};
+			const user = await prisma.user.findUnique({
+				where: {
+					id: session.userId
+				},
+				select: {
+					yearlyExpenses: true,
+					totalExpenses: true
 				}
 			});
-			return new Response(JSON.stringify(expense), { status: 200 });
+			if (!user) {
+				return new Response('User not found', { status: 404 });
+			}
+			const expense = await prisma.$transaction([
+				prisma.expense.create({
+					data: payload
+				}),
+				prisma.user.update({
+					where: {
+						id: session.userId
+					},
+					data: {
+						yearlyExpenses: {
+							...user?.yearlyExpenses,
+							[`${new Date(data.date).getFullYear()}`]: user?.yearlyExpenses?.[
+								`${new Date(data.date).getFullYear()}`
+							]
+								? user?.yearlyExpenses?.[`year${new Date(data.date).getFullYear()}`] + data.amount
+								: data.amount
+						},
+						totalExpenses: user?.totalExpenses ? user?.totalExpenses + data.amount : data.amount
+					}
+				})
+			]);
+			return new Response(JSON.stringify(expense[0]), { status: 200 });
 		} catch (err) {
 			if (err instanceof Error) {
 				return new Response(err.message, { status: 500 });

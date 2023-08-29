@@ -13,9 +13,19 @@ export async function GET(request) {
 			status: 401
 		});
 	}
+	const start = new Date(
+		request.url.searchParams.get('start') || new Date().toISOString().split('T')[0]
+	);
+	const end = new Date(
+		request.url.searchParams.get('end') || new Date().toISOString().split('T')[0]
+	);
 	const expenses = await prisma.expense.findMany({
 		where: {
-			userId: session.userId
+			userId: session.userId,
+			date: {
+				gte: start,
+				lte: end
+			}
 		},
 		orderBy: {
 			date: 'desc'

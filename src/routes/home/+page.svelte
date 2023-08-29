@@ -4,33 +4,84 @@
 	import { onMount } from 'svelte';
 	import Pie from '../../components/ExpensesTagsPie.svelte';
 	import { data } from './randomData';
-	import MultiSelect from 'svelte-multiselect';
 	import { signOut } from '@auth/sveltekit/client';
 	import CreateExpenseModal from '../../components/CreateExpenseModal.svelte';
-	import { page } from '$app/stores';
 	import type { Expense_t } from '$lib/types';
-	import { expensesStore } from '$lib/stores';
+	import {
+		dateRangeStore,
+		expensesStore,
+		totalExpensesStore,
+		yearlyExpensesStore
+	} from '$lib/stores';
 
-	let range = {
-		start: new Date('2021-08-24'),
-		end: new Date('2021-09-23')
-	};
-
+	let hamburgerMebu: HTMLDetailsElement | null = null;
 	let menuOpen: boolean = false;
+
+	let dateDivElement: HTMLDivElement | null = null;
+	let dateTextElement: HTMLParagraphElement | null = null;
+	let overflow: string = '0';
+
 	let addingFunds: boolean = false;
 	let subtractingFunds: boolean = false;
 
+	function findTagWithHighestSpendage(expenses: Expense_t[]): string {
+		if (expenses.length === 0) return 'None';
+		const tagSpendageMap: Record<string, number> = {};
+		expenses.forEach((expense) => {
+			expense.tags.forEach((tag) => {
+				if (tag in tagSpendageMap) {
+					tagSpendageMap[tag] += expense.amount;
+				} else {
+					tagSpendageMap[tag] = expense.amount;
+				}
+			});
+		});
+		const highestSpendageTag = Object.keys(tagSpendageMap).reduce((a, b) =>
+			tagSpendageMap[a] > tagSpendageMap[b] ? a : b
+		);
+		return highestSpendageTag;
+	}
+
+	$: console.log(overflow);
+
 	onMount(() => {
-		const details = document.querySelector('details');
-		if (!details) return;
-		details.addEventListener('toggle', () => {
-			menuOpen = details.open;
+		hamburgerMebu?.addEventListener('toggle', () => {
+			menuOpen = hamburgerMebu?.open ?? false;
 		});
 
-		fetch(`/api/expenses/getExpenses`)
+		if (dateDivElement && dateTextElement) {
+			overflow = `${dateDivElement?.scrollWidth - dateDivElement?.clientWidth}`;
+			if (parseInt(overflow) > 5) {
+				dateTextElement?.classList.add('text-animated');
+			} else {
+				dateTextElement?.classList.remove('text-animated');
+			}
+		}
+
+		window?.addEventListener('resize', (p) => {
+			if (dateDivElement && dateTextElement) {
+				overflow = `${dateDivElement?.scrollWidth - dateDivElement?.clientWidth}`;
+				if (parseInt(overflow) > 5) {
+					dateTextElement?.classList.add('text-animated');
+				} else {
+					dateTextElement?.classList.remove('text-animated');
+				}
+			}
+		});
+
+		fetch(`/api/expenses/getExpenses
+		?start=${$dateRangeStore[0]}
+		&end=${$dateRangeStore[1]}
+		`)
 			.then((res) => res.json())
 			.then((res) => {
 				expensesStore.set(res);
+			});
+		fetch(`/api/user/getYearlyTotalExpenses`)
+			.then((res) => res.json())
+			.then((res) => {
+				yearlyExpensesStore.set(res.yearlyExpenses);
+				totalExpensesStore.set(res.totalExpenses);
 			});
 	});
 </script>
@@ -42,15 +93,35 @@
 		class="border-0 bg-error bg-opacity-50 h-px mt-8 flex-none"
 		style="background-image: linear-gradient(to right, transparent, var(--primary-content), transparent);"
 	/>
-	<div class="flex flex-row mx-3 mt-3 mb-1 gap-1">
+	<div class="flex flex-row mx-3 mt-3 mb-1">
 		<div
-			class="bg-secondary overflow-x-hidden rounded-ss-md pl-4 text-lg whitespace-nowrap font-bold w-full align-middle justify-between items-center flex-row flex join-item"
+			class="bg-secondary overflow-x-hidden rounded-ss-md pl-4 text-md whitespace-nowrap font-bold w-full align-middle justify-between items-center flex-row flex join-item animated"
+			bind:this={dateDivElement}
 		>
-			{getDateRange(range)}
-			<div class="flex rounded-full h-full w-12 justify-center items-center">
-				<Icon icon="line-md:calendar" class="w-8 h-8 text-primary-content" />
-			</div>
+			<p
+				bind:this={dateTextElement}
+				class="text-md font-bold text-secondary-content w-min"
+				style="--overflow: -{overflow}px"
+			>
+				{getDateRange({
+					start: $dateRangeStore[0],
+					end: $dateRangeStore[1]
+				})}
+			</p>
 		</div>
+		<details class="dropdown dropdown-bottom join-item bg-secondary">
+			<summary class="flex rounded-full h-full w-12 justify-center items-center">
+				<Icon icon="line-md:calendar" class="w-8 h-8 text-primary-content" />
+			</summary>
+			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-32">
+				<li class="input">
+					<input type="date" class="input input-sm w-full" bind:value={$dateRangeStore[0]} />
+				</li>
+				<li class="input">
+					<input type="date" class="input input-sm w-full" bind:value={$dateRangeStore[1]} />
+				</li>
+			</ul>
+		</details>
 		<div class="lg:tooltip lg:tooltip-bottom" data-tip="Add Expense">
 			<button
 				class="btn btn-success p-2 join-item rounded-none"
@@ -65,7 +136,7 @@
 				/>
 			</button>
 		</div>
-		<details class="dropdown dropdown-end dropdown-hover">
+		<details class="dropdown dropdown-end dropdown-hover" bind:this={hamburgerMebu}>
 			{#if !menuOpen}
 				<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
 					<Icon
@@ -157,17 +228,26 @@
 
 		<div class="stat text-start">
 			<div class="stat-title">Spendage</div>
-			<div class="stat-value text-2xl">$89,400</div>
-			<div class="stat-desc text-start">Total - $123123</div>
-			<div class="stat-desc text-start">Highest in - Food</div>
-			<div class="stat-desc text-start">This year - $ 123132132</div>
+			<div class="stat-value text-2xl overflow-x-scroll">
+				${$expensesStore.reduce((acc, expense) => acc + expense.amount, 0).toLocaleString()}
+			</div>
+			<div class="stat-desc text-start">Total - ${$totalExpensesStore}</div>
+			<div class="stat-desc text-start">
+				Highest in - {findTagWithHighestSpendage($expensesStore)}
+			</div>
+			<div class="stat-desc text-start">
+				This year - ${$yearlyExpensesStore[new Date().getFullYear()]?.toLocaleString() ?? 0}
+			</div>
 		</div>
 	</div>
 	<div class="card bg-base-300 shadow h-48 mx-3 mt-3 p-2">
 		<Pie {data} />
 	</div>
 	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3">
-		<div class="overflow-x-auto">
+		<div
+			class="overflo yearlyExpenses = userP.yearlyExpenses!;
+w-x-auto"
+		>
 			<table class="table w-full">
 				<thead>
 					<tr>
@@ -197,8 +277,7 @@
 										btn btn-sm btn-error
 										join-item
 								"
-								on:click={
-									() => {
+									on:click={() => {
 										fetch(`/api/expenses/deleteExpense/${expense.id}`, {
 											method: 'DELETE'
 										})
@@ -210,8 +289,7 @@
 													);
 												}
 											});
-									}
-								}
+									}}
 								>
 									<Icon icon="ic:sharp-delete" class="w-4 h-4" />
 								</button>

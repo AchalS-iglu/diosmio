@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { expensesStore } from '$lib/stores';
+	import { expensesStore, totalExpensesStore, yearlyExpensesStore } from '$lib/stores';
 	import toast from 'svelte-french-toast';
 	import { MultiSelect } from 'svelte-multiselect';
 
@@ -28,6 +28,15 @@
 				if (res.ok) {
 					res.json().then((expense) => {
 						expensesStore.update((expenses) => [expense, ...expenses]);
+						yearlyExpensesStore.update((x) => {
+							return {
+								...x,
+								[new Date(expense.date).getFullYear()]: x[new Date(expense.date).getFullYear()]
+									? x[new Date(expense.date).getFullYear()] + expense.amount
+									: expense.amount
+							};
+						});
+						totalExpensesStore.update((x) => x + expense.amount);
 					});
 				}
 			}),
@@ -97,7 +106,7 @@
 		</div>
 		<div class="flex flex-row w-full justify-evenly">
 			<button class="btn btn-primary" type="submit">Add</button>
-			<button class="btn">Cancel</button>
+			<button class="btn" >Cancel</button>
 		</div>
 	</form>
 </dialog>
