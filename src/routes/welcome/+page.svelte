@@ -4,6 +4,8 @@
 	import googleIcon from '@iconify/icons-akar-icons/google-fill';
 	import githubIcon from '@iconify/icons-akar-icons/github-fill';
 	import { signIn } from '@auth/sveltekit/client';
+	import toast from 'svelte-french-toast';
+	import { error } from '@sveltejs/kit';
 </script>
 
 <div class="containerBetween">
@@ -23,10 +25,24 @@
             gap-2
     "
 		>
-			<button class="btn btn-error justify-self-center" on:click={() => signIn('google')}>
+			<button
+				class="btn btn-error justify-self-center"
+				on:click={() =>
+					signIn('google').catch((err) => {
+						toast.error(err.message);
+						console.log(err);
+					})}
+			>
 				<Icon icon={googleIcon} width="20" height="20" />Continue with Google
 			</button>
-			<button class="btn btn-neutral justify-self-center" on:click={() => signIn('github')}>
+			<button
+				class="btn btn-neutral justify-self-center"
+				on:click={() =>
+					signIn('github').catch((err) => {
+						toast.error(err.message);
+						console.log(err);
+					})}
+			>
 				<Icon icon={githubIcon} width="20" height="20" />Continue with Github
 			</button>
 		</div>
