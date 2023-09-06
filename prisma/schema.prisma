@@ -46,7 +46,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   expenses      Expense[]
-  yearlyExpenses Json @default("{}")
   totalExpenses Float @default(0)
   balance Float @default(0)
 }

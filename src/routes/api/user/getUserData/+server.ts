@@ -10,9 +10,8 @@ export const GET: RequestHandler = async ({ cookies }) => {
 			id: s.userId
 		},
 		select: {
-			yearlyExpenses: true,
-			totalExpenses: true,
-			balance: true
+			balance: true,
+			totalExpenses: true
 		}
 	});
 	if (!payload) {
@@ -22,9 +21,8 @@ export const GET: RequestHandler = async ({ cookies }) => {
 	}
 	return new Response(
 		JSON.stringify({
-			yearlyExpenses: payload?.yearlyExpenses ?? {},
-			totalExpenses: payload?.totalExpenses ?? 0,
-			balance: payload?.balance ?? 0
+			balance: payload?.balance ?? 0,
+			totalExpenses: payload?.totalExpenses ?? 0
 		}),
 		{
 			headers: {

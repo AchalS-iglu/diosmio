@@ -20,48 +20,90 @@
 
 		const theme = getThemesfromLS();
 
-		chart = new Chart(ctx, {
-			type: 'pie',
-			data: {
-				labels: topTags.length <= 4 ? topTags : [...topTags, 'Others'],
-				datasets: [
-					{
-						data:
-							topTags.length <= 4
-								? topTags.map((tag) => $tagsStore[tag])
-								: [...topTags.map((tag) => $tagsStore[tag]), otherTotal],
-						backgroundColor: [
-							// @ts-ignore
-							themes[`[data-theme=${theme}]`].accent,
-							// @ts-ignore
-							themes[`[data-theme=${theme}]`].info,
-							// @ts-ignore
-							themes[`[data-theme=${theme}]`].success,
-							// @ts-ignore
-							themes[`[data-theme=${theme}]`].warning,
-							// @ts-ignore
-							themes[`[data-theme=${theme}]`].error,
-							// @ts-ignore
-							themes[`[data-theme=${theme}]`].primary
-						],
-						hoverOffset: 4,
-						borderWidth: 0
-					}
-				]
-			},
-			options: {
-				responsive: true,
-				maintainAspectRatio: false,
-				plugins: {
-					legend: {
-						position: 'right'
-					}
+		if ($expensesStore.length == 0) {
+			chart = new Chart(ctx, {
+				type: 'pie',
+				data: {
+					labels: ['No expenses'],
+					datasets: [
+						{
+							data: [1],
+							backgroundColor: [
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].accent,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].info,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].success,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].warning,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].error,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].primary
+							],
+							hoverOffset: 4,
+							borderWidth: 0
+						}
+					]
 				},
-				onClick: () => {
-					console.log('test');
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							position: 'right'
+						}
+					},
+					onClick: () => {
+						console.log('test');
+					}
 				}
-			}
-		});
+			});
+		} else {
+			chart = new Chart(ctx, {
+				type: 'pie',
+				data: {
+					labels: topTags.length <= 4 ? topTags : [...topTags, 'Others'],
+					datasets: [
+						{
+							data:
+								topTags.length <= 4
+									? topTags.map((tag) => $tagsStore[tag])
+									: [...topTags.map((tag) => $tagsStore[tag]), otherTotal],
+							backgroundColor: [
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].accent,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].info,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].success,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].warning,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].error,
+								// @ts-ignore
+								themes[`[data-theme=${theme}]`].primary
+							],
+							hoverOffset: 4,
+							borderWidth: 0
+						}
+					]
+				},
+				options: {
+					responsive: true,
+					maintainAspectRatio: false,
+					plugins: {
+						legend: {
+							position: 'right'
+						}
+					},
+					onClick: () => {
+						console.log('test');
+					}
+				}
+			});
+		}
 	});
 </script>
 

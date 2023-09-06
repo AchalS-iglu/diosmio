@@ -5,8 +5,7 @@
 		dateRangeStore,
 		expensesStore,
 		tagsStore,
-		totalExpensesStore,
-		yearlyExpensesStore
+		totalExpensesStore
 	} from '$lib/stores';
 	import toast from 'svelte-french-toast';
 	import { MultiSelect } from 'svelte-multiselect';
@@ -39,14 +38,6 @@
 							$dateRangeStore[1].getTime() >= new Date(expense.date).getTime()
 						)
 							expensesStore.update((expenses) => [expense, ...expenses]);
-						yearlyExpensesStore.update((x) => {
-							return {
-								...x,
-								[new Date(expense.date).getFullYear()]: x[new Date(expense.date).getFullYear()]
-									? x[new Date(expense.date).getFullYear()] + expense.amount
-									: expense.amount
-							};
-						});
 						totalExpensesStore.update((x) => x + expense.amount);
 						balanceStore.update((x) => x - expense.amount);
 					});
@@ -123,7 +114,7 @@
 				on:click={(e) => {
 					e.preventDefault();
 					const dialog = document.getElementById('addExpense');
-					dialog.close();
+					dialog?.close();
 				}}>Cancel</button
 			>
 		</div>

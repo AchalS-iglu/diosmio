@@ -3,7 +3,6 @@
 	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import Pie from '../../components/ExpensesTagsPie.svelte';
-	import { data } from './randomData';
 	import { signOut } from '@auth/sveltekit/client';
 	import CreateExpenseModal from '../../components/CreateExpenseModal.svelte';
 	import type { Expense_t } from '$lib/types';
@@ -12,11 +11,11 @@
 		dateRangeStore,
 		expensesStore,
 		tagsStore,
-		totalExpensesStore,
-		yearlyExpensesStore
+		totalExpensesStore
 	} from '$lib/stores';
 	import { page } from '$app/stores';
 	import toast from 'svelte-french-toast';
+	import MoneyStressIllustration from '../../components/static/MoneyStressIllustration.svelte';
 
 	let hamburgerMebu: HTMLDetailsElement | null = null;
 	let menuOpen: boolean = false;
@@ -138,7 +137,6 @@
 		fetch(`/api/user/getUserData`)
 			.then((res) => res.json())
 			.then((res) => {
-				yearlyExpensesStore.set(res.yearlyExpenses);
 				totalExpensesStore.set(res.totalExpenses);
 				balanceStore.set(res.balance);
 			});
@@ -198,7 +196,6 @@
 							fetch(`/api/user/getUserData`)
 								.then((res) => res.json())
 								.then((res) => {
-									yearlyExpensesStore.set(res.yearlyExpenses);
 									totalExpensesStore.set(res.totalExpenses);
 								});
 						}}
@@ -333,19 +330,30 @@
 			<div class="stat-desc text-start">
 				Highest in - {findTagWithHighestSpendage($expensesStore)}
 			</div>
-			<div class="stat-desc text-start">
-				This year - ${$yearlyExpensesStore[new Date().getFullYear()]?.toLocaleString() ?? 0}
-			</div>
 		</div>
 	</div>
-	<div class="card bg-base-300 shadow h-48 mx-3 mt-3 p-2">
+	<div class="card bg-base-300 shadow h-48 mx-3 mt-3 p-4">
 		<Pie />
 	</div>
 	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3">
-		<div
-			class="overflo yearlyExpenses = userP.yearlyExpenses!;
-w-x-auto"
-		>
+		{#if $expensesStore.length === 0}
+			<!-- content here -->
+			<div class="flex items-center justify-center w-full h-full flex-col">
+				<div class="w-64 text-end flex gap-0 flex-col">
+					<MoneyStressIllustration />
+					<a class="link text-[0.6rem] mb-4" href="https://storyset.com/people"
+						>People illustrations by Storyset</a
+					>
+				</div>
+				<button
+					class="btn"
+					on:click={() =>
+						// @ts-ignore
+						window.addExpense.showModal()}>Start by adding an expense</button
+				>
+			</div>
+		{:else}
+			<!-- else content here -->
 			<table class="table w-full">
 				<thead>
 					<tr>
@@ -364,17 +372,17 @@ w-x-auto"
 							<td class="join">
 								<button
 									class="
-										btn btn-sm btn-warning
-										join-item
-								"
+											btn btn-sm btn-warning
+											join-item
+									"
 								>
 									<Icon icon="ic:round-edit" class="w-4 h-4" />
 								</button>
 								<button
 									class="
-										btn btn-sm btn-error
-										join-item
-								"
+											btn btn-sm btn-error
+											join-item
+									"
 									on:click={() => {
 										fetch(`/api/expenses/deleteExpense/${expense.id}`, {
 											method: 'DELETE',
@@ -388,6 +396,7 @@ w-x-auto"
 												expensesStore.update((expenses) =>
 													expenses.filter((e) => e.id !== body.id)
 												);
+												totalExpensesStore.update((x) => x - body.amount);
 											}
 										});
 									}}
@@ -399,6 +408,6 @@ w-x-auto"
 					{/each}
 				</tbody>
 			</table>
-		</div>
+		{/if}
 	</div>
 </div>
