@@ -15,8 +15,7 @@
 
 <div class="containerCenter gap-4">
 	<h1 class="text-4xl font-bold text-center text-base-content font-montserratAlt">Login</h1>
-	<form class="flex flex-col gap-2">
-		<!-- pass and user input  -->
+	<!-- <form class="flex flex-col gap-2">
 		<div class="form-control">
 			<label class="label" for="email-input">
 				<span class="label-text">Email</span>
@@ -30,10 +29,10 @@
 			<input type="password" id="pass-input" placeholder="Password" class="input input-bordered" />
 		</div>
 		<button class="btn btn-primary justify-self-center mt-2" type="submit"> Login </button>
-	</form>
-	<div>
+	</form> -->
+	<!-- <div>
 		<div class="divider flex w-64">OR</div>
-	</div>
+	</div> -->
 	<div
 		class="
             flex

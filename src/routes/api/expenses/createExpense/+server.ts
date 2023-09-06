@@ -20,7 +20,6 @@ export async function POST({ request }) {
 					id: s.userId
 				},
 				select: {
-					yearlyExpenses: true,
 					totalExpenses: true,
 					balance: true
 				}
@@ -37,14 +36,6 @@ export async function POST({ request }) {
 						id: s.userId
 					},
 					data: {
-						yearlyExpenses: {
-							...user?.yearlyExpenses,
-							[`${new Date(data.date).getFullYear()}`]: user?.yearlyExpenses?.[
-								`${new Date(data.date).getFullYear()}`
-							]
-								? user?.yearlyExpenses?.[`year${new Date(data.date).getFullYear()}`] + data.amount
-								: data.amount
-						},
 						totalExpenses: user?.totalExpenses ? user?.totalExpenses + data.amount : data.amount,
 						balance: user?.balance ? user?.balance - data.amount : -data.amount
 					}
