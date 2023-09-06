@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { formDatetoObject, getDateRange, objecttoFormDate, visibleDate } from '$lib/utils';
-	import Icon from '@iconify/svelte';
 	import { onMount } from 'svelte';
 	import Pie from '../../components/ExpensesTagsPie.svelte';
 	import { signOut } from '@auth/sveltekit/client';
@@ -16,6 +15,18 @@
 	import { page } from '$app/stores';
 	import toast from 'svelte-french-toast';
 	import MoneyStressIllustration from '../../components/static/MoneyStressIllustration.svelte';
+
+	import Icon from '@iconify/svelte';
+	import calendarIcon from '@iconify/icons-line-md/calendar';
+	import documentAddIcon from '@iconify/icons-line-md/document-add';
+	import closeMenuIcon from '@iconify/icons-line-md/close-to-menu-transition';
+	import menuIcon from '@iconify/icons-line-md/menu-to-close-transition';
+	import plusIcon from '@iconify/icons-line-md/plus';
+	import minusIcon from '@iconify/icons-line-md/minus';
+	import confirmIcon from '@iconify/icons-line-md/confirm';
+	import removeIcon from '@iconify/icons-line-md/remove';
+	import editIcon from '@iconify/icons-ic/round-edit';
+	import delIcon from '@iconify/icons-ic/sharp-delete';
 
 	let hamburgerMebu: HTMLDetailsElement | null = null;
 	let menuOpen: boolean = false;
@@ -168,7 +179,7 @@
 		</div>
 		<details class="dropdown dropdown-end">
 			<summary class="flex h-full w-12 justify-center items-center bg-secondary join-item">
-				<Icon icon="line-md:calendar" class="w-8 h-8 text-primary-content" />
+				<Icon icon={calendarIcon} class="w-8 h-8 text-primary-content" />
 			</summary>
 			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 gap-2">
 				<li class="input">
@@ -213,7 +224,7 @@
 					window.addExpense.showModal()}
 			>
 				<Icon
-					icon="line-md:document-add"
+					icon={documentAddIcon}
 					class="w-8 h-8"
 					color="hsl(var(--suc) / var(--tw-text-opacity))"
 				/>
@@ -223,18 +234,14 @@
 			{#if !menuOpen}
 				<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
 					<Icon
-						icon="line-md:close-to-menu-transition"
+						icon={closeMenuIcon}
 						class="w-8 h-8"
 						color="hsl(var(--suc) / var(--tw-text-opacity))"
 					/>
 				</summary>
 			{:else}
 				<summary class="btn btn-warning p-2 join-item rounded-none rounded-se-md">
-					<Icon
-						icon="line-md:menu-to-close-transition"
-						class="w-8 h-8"
-						color="hsl(var(--suc) / var(--tw-text-opacity))"
-					/>
+					<Icon icon={menuIcon} class="w-8 h-8" color="hsl(var(--suc) / var(--tw-text-opacity))" />
 				</summary>
 			{/if}
 			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-32">
@@ -264,13 +271,13 @@
 				{#if !addingFunds && !subtractingFunds}
 					<div class="flex flex-row join">
 						<button class="btn btn-sm btn-success join-item" on:click={() => (addingFunds = true)}>
-							<Icon icon="line-md:plus" class="w-4 h-4" />
+							<Icon icon={plusIcon} class="w-4 h-4" />
 						</button>
 						<button
 							class="btn btn-sm btn-error join-item"
 							on:click={() => (subtractingFunds = true)}
 						>
-							<Icon icon="line-md:minus" class="w-4 h-4" />
+							<Icon icon={minusIcon} class="w-4 h-4" />
 						</button>
 						<span class="btn btn-sm btn-info join-item"> FUNDS </span>
 					</div>
@@ -288,10 +295,10 @@
 								handleFundsUpdate('add');
 							}}
 						>
-							<Icon icon="line-md:confirm" class="w-4 h-4" />
+							<Icon icon={confirmIcon} class="w-4 h-4" />
 						</button>
 						<button class="btn btn-sm btn-error join-item" on:click={() => (addingFunds = false)}>
-							<Icon icon="line-md:remove" class="w-4 h-4" />
+							<Icon icon={removeIcon} class="w-4 h-4" />
 						</button>
 					</div>
 				{:else if subtractingFunds}
@@ -308,13 +315,13 @@
 								handleFundsUpdate('sub');
 							}}
 						>
-							<Icon icon="line-md:confirm" class="w-4 h-4" />
+							<Icon icon={confirmIcon} class="w-4 h-4" />
 						</button>
 						<button
 							class="btn btn-sm btn-error join-item"
 							on:click={() => (subtractingFunds = false)}
 						>
-							<Icon icon="line-md:remove" class="w-4 h-4" />
+							<Icon icon={removeIcon} class="w-4 h-4" />
 						</button>
 					</div>
 				{/if}
@@ -376,7 +383,7 @@
 											join-item
 									"
 								>
-									<Icon icon="ic:round-edit" class="w-4 h-4" />
+									<Icon icon={editIcon} class="w-4 h-4" />
 								</button>
 								<button
 									class="
@@ -401,7 +408,7 @@
 										});
 									}}
 								>
-									<Icon icon="ic:sharp-delete" class="w-4 h-4" />
+									<Icon icon={delIcon} class="w-4 h-4" />
 								</button>
 							</td>
 						</tr>
