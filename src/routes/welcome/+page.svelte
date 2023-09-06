@@ -3,6 +3,7 @@
 
 	import googleIcon from '@iconify/icons-akar-icons/google-fill';
 	import githubIcon from '@iconify/icons-akar-icons/github-fill';
+	import { signIn } from '@auth/sveltekit/client';
 </script>
 
 <div class="containerBetween">
