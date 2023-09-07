@@ -8,8 +8,6 @@
 	let chart;
 	let options;
 
-	const ctx = document.getElementById('myChart') as HTMLCanvasElement;
-
 	// Sort tags by total amount in descending order
 	const sortedTags = Object.keys($tagsStore).sort((a, b) => $tagsStore[b] - $tagsStore[a]);
 
@@ -105,6 +103,7 @@
 		};
 	}
 	onMount(() => {
+		const ctx = document.getElementById('myChart') as HTMLCanvasElement;
 		chart = new Chart(ctx, options);
 	});
 </script>
