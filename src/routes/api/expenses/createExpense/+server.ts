@@ -2,8 +2,8 @@ import { prisma } from '$lib/server/prisma.js';
 import { AuthCheck } from '$lib/server/serverUtils.js';
 import type { Expense_t } from '$lib/types.js';
 
-export async function POST({ request, cookies }) {
-	const s = await AuthCheck(cookies);
+export async function POST({ request, locals }) {
+	const s = await AuthCheck(locals);
 	if (!s) return new Response('Unauthorized', { status: 401 });
 	const data = await request.json();
 	if (isDataValid(data)) {

@@ -2,8 +2,8 @@ import { prisma } from '$lib/server/prisma';
 import { AuthCheck } from '$lib/server/serverUtils';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ cookies }) => {
-	const s = await AuthCheck(cookies);
+export const GET: RequestHandler = async ({ locals }) => {
+	const s = await AuthCheck(locals);
 	if (!s) return new Response('Unauthorized', { status: 401 });
 	const payload = await prisma.user
 		.findUnique({

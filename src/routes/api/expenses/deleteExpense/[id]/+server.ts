@@ -1,9 +1,9 @@
 import { prisma } from '$lib/server/prisma';
 import { AuthCheck } from '$lib/server/serverUtils.js';
 
-export async function DELETE({ params, request, cookies }) {
+export async function DELETE({ params, request, locals }) {
 	console.log(JSON.stringify(request.headers));
-	const s = await AuthCheck(cookies);
+	const s = await AuthCheck(locals);
 	if (!s) return new Response('Unauthorized', { status: 401 });
 	// const expense = await prisma.expense
 	// 	.delete({

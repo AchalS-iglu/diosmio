@@ -2,8 +2,8 @@ import { USER } from '$env/static/private';
 import { prisma } from '$lib/server/prisma.js';
 import { AuthCheck } from '$lib/server/serverUtils.js';
 
-export async function GET({ cookies, url }) {
-	const s = await AuthCheck(cookies);
+export async function GET({ locals, url }) {
+	const s = await AuthCheck(locals);
 	if (!s) return new Response('Unauthorized', { status: 401 });
 	const start = new Date(url.searchParams.get('start'));
 	const end = new Date(url.searchParams.get('end'));
