@@ -40,6 +40,7 @@ export async function POST({ request }) {
 			}
 		})
 		.catch((err) => {
+			console.log(`Error updating totalExpenses for user ${s.userId}: ${err}`);
 			return new Response(err, {
 				status: 500
 			});

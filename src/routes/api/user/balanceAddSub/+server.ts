@@ -18,14 +18,27 @@ export async function POST({ request }) {
 			status: 400
 		});
 	}
-	const currentBalance = await prisma.user.findUnique({
-		where: {
-			id: s.userId
-		},
-		select: {
-			balance: true
-		}
-	});
+	const currentBalance = await prisma.user
+		.findUnique({
+			where: {
+				id: s.userId
+			},
+			select: {
+				balance: true
+			}
+		})
+		.catch((err) => {
+			console.log(`Error getting balance for user ${s.userId}: ${err}`);
+			return new Response(err, {
+				status: 500
+			});
+		})
+		.catch((err) => {
+			console.log(`Error getting balance for user ${s.userId}: ${err}`);
+			new Response(err, {
+				status: 500
+			});
+		});
 	const res = await prisma.user
 		.update({
 			where: {
@@ -40,6 +53,7 @@ export async function POST({ request }) {
 			}
 		})
 		.catch((err) => {
+			console.log(`Error updating balance for user ${s.userId}: ${err}`);
 			return new Response(err, {
 				status: 500
 			});
