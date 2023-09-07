@@ -10,7 +10,12 @@
 	import toast from 'svelte-french-toast';
 	import { MultiSelect } from 'svelte-multiselect';
 
-	let form = {
+	let form: {
+		tags: string[];
+		amount: number;
+		date: Date;
+		title: string;
+	} = {
 		tags: [],
 		amount: 0,
 		date: new Date(),

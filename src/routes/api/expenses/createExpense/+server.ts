@@ -12,7 +12,7 @@ export async function POST({ request, locals }) {
 				title: data.title,
 				amount: data.amount,
 				date: data.date,
-				tags: data.tags,
+				tags: data.tags.map((t) => t.toString()),
 				userId: s.userId
 			};
 			const user = await prisma.user.findUnique({
