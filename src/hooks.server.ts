@@ -48,23 +48,15 @@ export const handle: Handle = sequence(
 		],
 		secret: AUTH_SECRET,
 		trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
-		adapter: PrismaAdapter(prisma)
-		// callbacks: {
-		// 	session: async function ({ session, token, user }) {
-		// 		const sessionP = await prisma.session.findFirst({
-		// 			where: {
-		// 				id: session.
-		// 			}
-		// 		});
-		// 		let sessionToken: string | null = null;
-		// 		if (sessionP) {
-		// 			sessionToken = sessionP.sessionToken!;
-		// 		}
-
-		// 		session.user.token = sessionToken;
-		// 		return session;
-		// 	}
-		// }
+		adapter: PrismaAdapter(prisma),
+		callbacks: {
+			session: async ({ session, token, user }) => {
+				if (session?.user) {
+					session.user.id = user.id;
+				}
+				return session;
+			}
+		}
 	}),
 	authorization
 );

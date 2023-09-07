@@ -22,7 +22,7 @@
 			fetch('/api/expenses/createExpense', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 					// get auth from cookie
 				},
 				body: JSON.stringify({
