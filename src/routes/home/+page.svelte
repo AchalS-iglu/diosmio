@@ -339,7 +339,9 @@
 		</div>
 	</div>
 	<div class="card bg-base-300 shadow h-48 mx-3 mt-3 p-4">
-		<Pie />
+		{#key $expensesStore}
+			<Pie />
+		{/key}
 	</div>
 	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3">
 		{#if $expensesStore.length === 0}
