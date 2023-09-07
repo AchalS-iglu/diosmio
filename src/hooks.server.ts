@@ -20,13 +20,9 @@ async function authorization({ event, resolve }) {
 	if (event.url.pathname == '/home') {
 		const session = await event.locals.getSession();
 		if (!session) {
-			throw redirect(303, '/login');
+			throw redirect(303, '/welcome');
 		}
-	} else if (
-		event.url.pathname == '/login' ||
-		event.url.pathname == '/register' ||
-		event.url.pathname == '/welcome'
-	) {
+	} else if (event.url.pathname == '/welcome') {
 		const session = await event.locals.getSession();
 		if (session) {
 			throw redirect(303, '/home');
