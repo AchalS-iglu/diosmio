@@ -52,7 +52,7 @@ export const handle: Handle = sequence(
 		callbacks: {
 			session: async ({ session, token, user }) => {
 				if (session?.user) {
-					session.user.id = user.id;
+					session.user.userId = user.id;
 				}
 				return session;
 			}
