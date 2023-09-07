@@ -401,6 +401,7 @@
 													expenses.filter((e) => e.id !== body.id)
 												);
 												totalExpensesStore.update((x) => x - body.amount);
+												balanceStore.update((x) => x + body.amount);
 											}
 										});
 									}}
