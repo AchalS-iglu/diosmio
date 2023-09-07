@@ -1,25 +1,7 @@
 import type { Cookies } from '@sveltejs/kit';
 import { prisma } from './prisma';
 
-export const PostAuth = async (request: Request) => {
-	const sessionToken = request.headers.get('Authorization')?.split(' ')[1];
-	const session = await prisma.session
-		.findUnique({
-			where: {
-				sessionToken: sessionToken
-			}
-		})
-		.catch((err) => {
-			console.log(`Error getting session: ${err}`);
-			return false;
-		});
-	if (!session || session.expires < new Date()) {
-		return false;
-	}
-	return session;
-};
-
-export const GetAuth = async (cookies: Cookies) => {
+export const AuthCheck = async (cookies: Cookies) => {
 	const sessionToken = cookies.get('next-auth.session-token');
 	const session = await prisma.session
 		.findUnique({

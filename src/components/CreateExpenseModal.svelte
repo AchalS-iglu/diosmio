@@ -24,7 +24,6 @@
 				headers: {
 					'Content-Type': 'application/json',
 					// get auth from cookie
-					Authorization: `Bearer ${$page.data.session?.user.token}`
 				},
 				body: JSON.stringify({
 					...form,

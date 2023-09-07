@@ -1,8 +1,8 @@
 import { prisma } from '$lib/server/prisma';
-import { PostAuth } from '$lib/server/serverUtils.js';
+import { AuthCheck } from '$lib/server/serverUtils.js';
 
-export async function POST({ request }) {
-	const s = await PostAuth(request);
+export async function POST({ request, cookies }) {
+	const s = await AuthCheck(cookies);
 	if (!s) return new Response('Unauthorized', { status: 401 });
 	const { amount, type } = await request.json();
 	if (isNaN(amount)) {

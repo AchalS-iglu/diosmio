@@ -72,8 +72,7 @@
 		fetch(`/api/user/balanceAddSub`, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${$page.data.session?.user.token}`
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				amount: fundsForm,
@@ -393,9 +392,7 @@
 									on:click={() => {
 										fetch(`/api/expenses/deleteExpense/${expense.id}`, {
 											method: 'DELETE',
-											headers: {
-												Authorization: `Bearer ${$page.data.session?.user.token}`
-											}
+											headers: {}
 										}).then(async (res) => {
 											const body = await res.json();
 											console.log(body);
