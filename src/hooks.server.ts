@@ -13,7 +13,6 @@ import {
 } from '$env/static/private';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '$lib/server/prisma';
-import type { Session, TokenSet, User } from '@auth/core/types';
 
 async function authorization({ event, resolve }) {
 	// Protect any routes under /authenticated
@@ -49,23 +48,23 @@ export const handle: Handle = sequence(
 		],
 		secret: AUTH_SECRET,
 		trustHost: AUTH_TRUST_HOST == 'true' ? true : false,
-		adapter: PrismaAdapter(prisma),
-		callbacks: {
-			session: async function ({ session, token, user }) {
-				const sessionP = await prisma.session.findFirst({
-					where: {
-						userId: user.id
-					}
-				});
-				let sessionToken: string | null = null;
-				if (sessionP) {
-					sessionToken = sessionP.sessionToken!;
-				}
+		adapter: PrismaAdapter(prisma)
+		// callbacks: {
+		// 	session: async function ({ session, token, user }) {
+		// 		const sessionP = await prisma.session.findFirst({
+		// 			where: {
+		// 				id: session.
+		// 			}
+		// 		});
+		// 		let sessionToken: string | null = null;
+		// 		if (sessionP) {
+		// 			sessionToken = sessionP.sessionToken!;
+		// 		}
 
-				session.user.token = sessionToken;
-				return session;
-			}
-		}
+		// 		session.user.token = sessionToken;
+		// 		return session;
+		// 	}
+		// }
 	}),
 	authorization
 );
