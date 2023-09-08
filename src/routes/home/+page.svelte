@@ -27,6 +27,7 @@
 	import removeIcon from '@iconify/icons-line-md/remove';
 	import editIcon from '@iconify/icons-ic/round-edit';
 	import delIcon from '@iconify/icons-ic/sharp-delete';
+	import NoDataIllustration from '../../components/static/NoDataIllustration.svelte';
 
 	let hamburgerMebu: HTMLDetailsElement | null = null;
 	let menuOpen: boolean = false;
@@ -90,25 +91,28 @@
 		fundsForm = 0;
 	}
 
-	$expensesStore.forEach((item) => {
-		item.tags.forEach((tag) => {
-			if ($tagsStore[tag]) {
-				tagsStore.update((tags) => {
-					return {
-						...tags,
-						[tag]: tags[tag] + item.amount
-					};
-				});
-			} else {
-				tagsStore.update((tags) => {
-					return {
-						...tags,
-						[tag]: item.amount
-					};
-				});
-			}
+	$: {
+		tagsStore.set({});
+		$expensesStore.forEach((item) => {
+			item.tags.forEach((tag) => {
+				if ($tagsStore[tag]) {
+					tagsStore.update((tags) => {
+						return {
+							...tags,
+							[tag]: tags[tag] + item.amount
+						};
+					});
+				} else {
+					tagsStore.update((tags) => {
+						return {
+							...tags,
+							[tag]: item.amount
+						};
+					});
+				}
+			});
 		});
-	});
+	}
 
 	onMount(() => {
 		hamburgerMebu?.addEventListener('toggle', () => {
@@ -339,9 +343,16 @@
 		</div>
 	</div>
 	<div class="card bg-base-300 shadow h-48 mx-3 mt-3 p-4">
-		{#key $expensesStore}
-			<Pie />
-		{/key}
+		{#if $expensesStore.length !== 0}
+			{#key $tagsStore}
+				<Pie tags={$tagsStore} />
+			{/key}
+		{:else}
+			<NoDataIllustration />
+			<a class="link text-[0.6rem] mb-4 self-center" href="https://storyset.com/data"
+				>Data illustrations by Storyset</a
+			>
+		{/if}
 	</div>
 	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3">
 		{#if $expensesStore.length === 0}
