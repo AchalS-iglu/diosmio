@@ -7,6 +7,8 @@
 		tagsStore,
 		totalExpensesStore
 	} from '$lib/stores';
+	import { reset } from '__sveltekit/paths';
+	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import { MultiSelect } from 'svelte-multiselect';
 
@@ -21,6 +23,17 @@
 		date: new Date(),
 		title: ''
 	};
+
+	const resetForm = () => {
+		form = {
+			tags: [],
+			amount: 0,
+			date: new Date(),
+			title: ''
+		};
+	};
+
+	onMount(() => resetForm());
 
 	const sendCreateExpenseRequest = () => {
 		toast.promise(
@@ -44,6 +57,7 @@
 							expensesStore.update((expenses) => [expense, ...expenses]);
 						totalExpensesStore.update((x) => x + expense.amount);
 						balanceStore.update((x) => x - expense.amount);
+						resetForm();
 					});
 				}
 			}),

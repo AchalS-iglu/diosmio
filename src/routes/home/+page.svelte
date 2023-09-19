@@ -373,7 +373,7 @@
 			</div>
 		{:else}
 			<!-- else content here -->
-			<table class="table w-full">
+			<table class="table w-full table-pin-rows overflow-y-scroll">
 				<thead>
 					<tr>
 						<th>Title</th>
