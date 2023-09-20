@@ -354,7 +354,7 @@
 			>
 		{/if}
 	</div>
-	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3">
+	<div class="card bg-base-300 h-[97vh] grow flex-1 m-3 overflow-y-scroll">
 		{#if $expensesStore.length === 0}
 			<!-- content here -->
 			<div class="flex items-center justify-center w-full h-full flex-col">
@@ -373,7 +373,7 @@
 			</div>
 		{:else}
 			<!-- else content here -->
-			<table class="table w-full table-pin-rows overflow-y-scroll">
+			<table class="table w-full">
 				<thead>
 					<tr>
 						<th>Title</th>
