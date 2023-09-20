@@ -16,19 +16,19 @@
 
 		// Keep only the highest 7 tags and put the rest in an "Others" category
 
-		const topTags = sortedTags.slice(0, 7);
-		const otherTotal = sortedTags.slice(7).reduce((acc, tag) => acc + tags[tag], 0);
+		const topTags = sortedTags.slice(0, 5);
+		const otherTotal = sortedTags.slice(5).reduce((acc, tag) => acc + tags[tag], 0);
 
 		const theme = getThemesfromLS();
 
 		return {
 			type: 'pie',
 			data: {
-				labels: sortedTags.length <= 7 ? topTags : [...topTags, 'Others'],
+				labels: sortedTags.length <= 5 ? topTags : [...topTags, 'Others'],
 				datasets: [
 					{
 						data:
-							sortedTags.length <= 7
+							sortedTags.length <= 5
 								? topTags.map((tag) => tags[tag])
 								: [...topTags.map((tag) => tags[tag]), otherTotal],
 						backgroundColor: [

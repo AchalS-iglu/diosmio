@@ -382,7 +382,7 @@
 						<th />
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="overflow-y-scroll">
 					{#each $expensesStore as expense}
 						<tr>
 							<td>{expense.title}</td>
