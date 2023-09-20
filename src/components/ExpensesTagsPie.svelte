@@ -24,7 +24,7 @@
 		return {
 			type: 'pie',
 			data: {
-				labels: sortedTags.length <= 5 ? topTags : [...topTags, 'Others'],
+				labels: sortedTags.length <= 5 ? topTags : [...topTags, 'others'],
 				datasets: [
 					{
 						data:
