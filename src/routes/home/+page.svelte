@@ -248,7 +248,7 @@
 				</summary>
 			{/if}
 			<ul class="dropdown-content z-[1] menu mt-1 p-2 shadow bg-base-300 rounded-box w-32">
-				<li>
+				<!-- <li>
 					<button
 						class="btn btn-sm mb-2"
 						on:click={() => {
@@ -257,7 +257,7 @@
 					>
 						Settings
 					</button>
-				</li>
+				</li> -->
 				<li>
 					<button class="btn btn-sm" on:click={() => signOut()}> Logout </button>
 				</li>

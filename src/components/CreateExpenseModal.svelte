@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import {
 		balanceStore,
 		dateRangeStore,
@@ -7,7 +6,6 @@
 		tagsStore,
 		totalExpensesStore
 	} from '$lib/stores';
-	import { reset } from '__sveltekit/paths';
 	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 	import { MultiSelect } from 'svelte-multiselect';
